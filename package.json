@@ -1,7 +1,7 @@
 {
-  "name": "parcel-test",
+  "name": "fusebox-demo-app",
   "version": "1.0.0",
-  "description": "testing parcel build process with react, sass, express",
+  "description": "fusebox build process with react, sass, express",
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
