@@ -6,10 +6,5 @@
     "transform-function-bind",
     "transform-object-rest-spread",
     "transform-runtime"
-  ],
-  "env": {
-    "development": {
-      "plugins": ["react-hot-loader/babel"]
-    }
-  }
+  ]
 }

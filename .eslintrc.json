@@ -9,6 +9,7 @@
   ],
   "rules": {
     "array-bracket-spacing": 0,
+    "arrow-parens": [2, "as-needed"],
     "strict": 0,
     "semi": ["error", "never"],
     "comma-dangle": [1, "always-multiline"],
@@ -24,6 +25,7 @@
     "jsx-quotes": [1],
     "max-len": [1, 120, 2, { "ignoreComments": true }],
     "no-confusing-arrow": 0,
+    "no-mixed-operators": 0,
     "no-nested-ternary": 0,
     "no-restricted-globals": 1,
     "no-underscore-dangle": 0,

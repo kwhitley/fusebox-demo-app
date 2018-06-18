@@ -30,7 +30,7 @@ export const registerTagMessages = io => {
     tag.values = ([ ...tag.values, newValue ]).slice(-VALUE_LIMIT)
     tag.updated = new Date()
 
-    io.emit('tag/update_values', { id: tag.id, values: tag.values })
+    io.emit('tags/update', { id: tag.id, values: tag.values })
   }
 
   setInterval(updateTag, 100)

@@ -10,7 +10,7 @@ import Groups from './pages/Groups'
 export const routes = [
   { path: '/list', name: 'List', component: ConnectedList },
   { path: '/package', name: 'Package', component: ConnectedPackage },
-  { path: '/groups', name: 'Groups Demo', component: Groups },
+  { path: '/groups', name: 'Streaming Tags', component: Groups },
 ]
 
 export const Nav = () =>

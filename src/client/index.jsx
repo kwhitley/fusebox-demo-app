@@ -14,6 +14,7 @@ import createHistory from 'history/createBrowserHistory'
 import mergedReducers from './state'
 import App from './components/App'
 import api from './state/api'
+import tags from './state/tags'
 import route from './state/route'
 import dashboards from './state/dashboards'
 import './styles/base.scss'
@@ -31,7 +32,7 @@ const store = createStore(
 )
 
 // history binding... messy, abstract elsewhere or turn into module
-history.listen((location) => {
+history.listen(location => {
   let path = `${location.pathname}${location.search}${location.hash}`
   store.dispatch(route.actions.change(path))
 })
@@ -44,6 +45,10 @@ store.dispatch(route.actions.change(path))
 
 // register sagas
 sagaMiddleware.run(api.sagas.watcherSaga)
+sagaMiddleware.run(tags.sagas.watcherSaga)
+sagaMiddleware.run(tags.sagas.streamingSaga)
+store.dispatch(tags.loadTags())
+store.dispatch(tags.connectStream())
 
 ReactDom.render(
   <Provider store={store}>
