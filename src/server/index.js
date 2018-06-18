@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import compression from 'compression'
 import path from 'path'
 import fs from 'fs'
+import tags, { registerTagMessages } from './tags'
 // const pkg = require('../package.json')
 
 // load .env using dotenv first
@@ -12,6 +13,9 @@ require('env-autoload')
 // instantiate express
 const app = express()
 const PRODUCTION = process.env.NODE_ENV === 'production'
+const PORT = process.env.PORT || 3000
+const server = require('http').createServer(app)
+const io = require('socket.io')(server)
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -52,6 +56,9 @@ app.get('/package.json',
   }, 1000)
 )
 
-const serverPort = process.env.PORT || 3000
-app.listen(serverPort)
-console.log(`Express server @ http://localhost:${serverPort} (${PRODUCTION ? 'production' : 'development'})\n`)
+registerTagMessages(io)
+app.get('/api/tags', tags)
+app.get('/foo', (req, res) => res.send('bar'))
+
+server.listen(PORT)
+console.log(`Express server @ http://localhost:${PORT} (${PRODUCTION ? 'production' : 'development'})\n`)

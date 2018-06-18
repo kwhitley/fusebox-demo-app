@@ -25,6 +25,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _tags = require('./tags');
+
+var _tags2 = _interopRequireDefault(_tags);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (function () {
@@ -42,6 +46,9 @@ require('env-autoload');
 // instantiate express
 var app = (0, _express2.default)();
 var PRODUCTION = process.env.NODE_ENV === 'production';
+var PORT = process.env.PORT || 3000;
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({ extended: false }));
@@ -78,9 +85,14 @@ app.get('/package.json', function (req, res) {
   }, 1000);
 });
 
-var serverPort = process.env.PORT || 3000;
-app.listen(serverPort);
-console.log('Express server @ http://localhost:' + serverPort + ' (' + (PRODUCTION ? 'production' : 'development') + ')\n');
+(0, _tags.registerTagMessages)(io);
+app.get('/api/tags', _tags2.default);
+app.get('/foo', function (req, res) {
+  return res.send('bar');
+});
+
+server.listen(PORT);
+console.log('Express server @ http://localhost:' + PORT + ' (' + (PRODUCTION ? 'production' : 'development') + ')\n');
 ;
 
 (function () {
@@ -94,8 +106,89 @@ console.log('Express server @ http://localhost:' + serverPort + ' (' + (PRODUCTI
 
   reactHotLoader.register(app, 'app', 'unknown');
   reactHotLoader.register(PRODUCTION, 'PRODUCTION', 'unknown');
+  reactHotLoader.register(PORT, 'PORT', 'unknown');
+  reactHotLoader.register(server, 'server', 'unknown');
+  reactHotLoader.register(io, 'io', 'unknown');
   reactHotLoader.register(staticPath, 'staticPath', 'unknown');
-  reactHotLoader.register(serverPort, 'serverPort', 'unknown');
+  leaveModule(module);
+})();
+
+;
+});
+___scope___.file("server/tags.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.registerTagMessages = undefined;
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(function () {
+  var enterModule = require('react-hot-loader').enterModule;
+
+  enterModule && enterModule(module);
+})();
+
+var app = require('express')();
+
+var random = function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+var VALUE_LIMIT = 20;
+
+var tags = [{ id: 1, name: 'foo', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 2, name: 'bar', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 3, name: 'baz', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 4, name: 'cat', created: new Date(), updated: new Date(), isActive: false, values: [] }, { id: 5, name: 'miffles', created: new Date(), updated: new Date(), isActive: false, values: [] }, { id: 6, name: 'vlad', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 7, name: 'baxter', created: new Date(), updated: new Date(), isActive: true, values: [] }];
+
+app.get('*', function (req, res) {
+  return res.json(tags);
+});
+
+var _default = app;
+exports.default = _default;
+var registerTagMessages = exports.registerTagMessages = function registerTagMessages(io) {
+  var updateTag = function updateTag() {
+    var activeTags = tags.filter(function (tag) {
+      return tag.isActive;
+    });
+    var tag = activeTags[random(0, activeTags.length - 1)];
+    var values = tag.values;
+
+    var lastValue = values.length && values[values.length - 1] || 0;
+    var up = Math.random() > 0.5;
+    var newValue = lastValue + (up ? 1 : -1);
+
+    tag.values = [].concat((0, _toConsumableArray3.default)(tag.values), [newValue]).slice(-VALUE_LIMIT);
+    tag.updated = new Date();
+
+    io.emit('tag/update_values', { id: tag.id, values: tag.values });
+  };
+
+  setInterval(updateTag, 100);
+};
+;
+
+(function () {
+  var reactHotLoader = require('react-hot-loader').default;
+
+  var leaveModule = require('react-hot-loader').leaveModule;
+
+  if (!reactHotLoader) {
+    return;
+  }
+
+  reactHotLoader.register(app, 'app', 'unknown');
+  reactHotLoader.register(random, 'random', 'unknown');
+  reactHotLoader.register(VALUE_LIMIT, 'VALUE_LIMIT', 'unknown');
+  reactHotLoader.register(tags, 'tags', 'unknown');
+  reactHotLoader.register(registerTagMessages, 'registerTagMessages', 'unknown');
+  reactHotLoader.register(_default, 'default', 'unknown');
   leaveModule(module);
 })();
 
