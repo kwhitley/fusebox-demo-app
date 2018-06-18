@@ -42,12 +42,11 @@ export const initialState = fromJS({
 })
 
 function* fetchPackageInfo() {
-  console.log('fetchPackageInfo saga triggered')
   try {
     const data = yield call(() => axios.get('/package.json').then(r => fromJS(r.data)))
     yield put({ type: 'api/LOAD_PACKAGE_INFO_SUCCESS', data })
   } catch (error) {
-    console.log('error', error)
+    console.log('fetchPackageInfo', error)
     yield put({ type: 'api/LOAD_PACKAGE_INFO_ERROR', error: error.message })
     // throw new Error(error)
   }

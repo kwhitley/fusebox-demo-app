@@ -55,8 +55,8 @@ export const actionReducers = [
       let tag = findTag(state, action.tagID)
       let matchedGroup = findGroup(state, action.groupID)
 
-      console.log('matched tag', tag.toJS())
-      console.log('matched group', matchedGroup.toJS())
+      // console.log('matched tag', tag.toJS())
+      // console.log('matched group', matchedGroup.toJS())
 
       if (!tag) throw new Error(`no tag found with id=${action.tagID}`, action)
       if (!matchedGroup) throw new Error(`no group found with id=${action.groupID}`, action)
