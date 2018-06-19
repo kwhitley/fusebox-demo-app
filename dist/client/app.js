@@ -624,7 +624,7 @@ var selectors = {
   tagsLoader: new _tags.ApiResource(),
   streamStatus: new _tags.Stream(),
   editingTag: false,
-  all: [{ id: 1, name: 'foo', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 2, name: 'bar', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 3, name: 'baz', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 4, name: 'cat', created: new Date(), updated: new Date(), isActive: false, values: [] }, { id: 5, name: 'miffles', created: new Date(), updated: new Date(), isActive: false, values: [] }, { id: 6, name: 'vlad', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 7, name: 'baxter', created: new Date(), updated: new Date(), isActive: true, values: [] }]
+  all: [{ id: 1, order: 1, name: 'foo', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 2, order: 2, name: 'bar', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 3, order: 3, name: 'baz', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 4, order: 4, name: 'cat', created: new Date(), updated: new Date(), isActive: false, values: [] }, { id: 5, order: 5, name: 'miffles', created: new Date(), updated: new Date(), isActive: false, values: [] }, { id: 6, order: 6, name: 'vlad', created: new Date(), updated: new Date(), isActive: true, values: [] }, { id: 7, order: 7, name: 'baxter', created: new Date(), updated: new Date(), isActive: true, values: [] }]
 });
 
 function fetchTags() {
@@ -757,6 +757,17 @@ var sagas = {
   },
   reducer: function reducer(state, action) {
     return state.set('editingTag', false);
+  }
+}, {
+  editTag: function editTag(id, values) {
+    return { type: 'tags/EDIT_TAG', id: id, values: values };
+  },
+  reducer: function reducer(state, action) {
+    return state.set('editingTag', false).update('all', function (tags) {
+      return tags.map(function (tag) {
+        return tag.get('id') === action.id ? tag.merge(action.values) : tag;
+      });
+    });
   }
 }];
 
@@ -1712,7 +1723,8 @@ var Tags = function Tags(_ref) {
   var tags = _ref.tags,
       _setEditingTag = _ref.setEditingTag,
       editingTagID = _ref.editingTagID,
-      unsetEditingTag = _ref.unsetEditingTag;
+      unsetEditingTag = _ref.unsetEditingTag,
+      editTag = _ref.editTag;
 
   return _react2.default.createElement(
     _semanticUiReact.Card.Group,
@@ -1735,7 +1747,8 @@ var Tags = function Tags(_ref) {
             enterEditMode: function enterEditMode() {
               return _setEditingTag(tag.id);
             },
-            exitEditMode: unsetEditingTag
+            exitEditMode: unsetEditingTag,
+            saveTagAction: editTag
           })
         ),
         _react2.default.createElement(
@@ -1920,7 +1933,8 @@ var AllowEdit = function AllowEdit(_ref) {
   var tag = _ref.tag,
       isEditing = _ref.isEditing,
       enterEditMode = _ref.enterEditMode,
-      exitEditMode = _ref.exitEditMode;
+      exitEditMode = _ref.exitEditMode,
+      saveTagAction = _ref.saveTagAction;
 
   return _react2.default.createElement(
     _react2.default.Fragment,
@@ -1960,7 +1974,9 @@ var AllowEdit = function AllowEdit(_ref) {
           { basic: true, onClick: exitEditMode },
           'Cancel'
         ),
-        _react2.default.createElement(_semanticUiReact.Button, { positive: true, icon: 'checkmark', labelPosition: 'right', content: 'Save' })
+        _react2.default.createElement(_semanticUiReact.Button, { positive: true, icon: 'checkmark', labelPosition: 'right', content: 'Save', onClick: function onClick() {
+            return saveTagAction(tag.id, tag);
+          } })
       )
     )
   );

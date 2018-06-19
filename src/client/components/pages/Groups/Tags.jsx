@@ -7,7 +7,7 @@ import tags from '../../../state/tags'
 import Chart from './HighChart'
 import AllowEdit from './AllowEdit'
 
-const Tags = ({ tags, setEditingTag, editingTagID, unsetEditingTag }) => {
+const Tags = ({ tags, setEditingTag, editingTagID, unsetEditingTag, editTag }) => {
   return (
     <Card.Group className="tags" itemsPerRow={3}>
       {
@@ -20,6 +20,7 @@ const Tags = ({ tags, setEditingTag, editingTagID, unsetEditingTag }) => {
                 isEditing={tag.id === editingTagID}
                 enterEditMode={() => setEditingTag(tag.id)}
                 exitEditMode={unsetEditingTag}
+                saveTagAction={editTag}
               />
             </Card.Header>
             <Card.Content>

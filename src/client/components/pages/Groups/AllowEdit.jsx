@@ -1,7 +1,7 @@
 import React from 'react'
 import { Icon, Dialog, Button, Modal } from 'semantic-ui-react'
 
-const AllowEdit = ({ tag, isEditing, enterEditMode, exitEditMode }) => {
+const AllowEdit = ({ tag, isEditing, enterEditMode, exitEditMode, saveTagAction }) => {
   return (
     <React.Fragment>
       <Button
@@ -21,7 +21,7 @@ const AllowEdit = ({ tag, isEditing, enterEditMode, exitEditMode }) => {
         </Modal.Content>
         <Modal.Actions>
           <Button basic onClick={exitEditMode}>Cancel</Button>
-          <Button positive icon='checkmark' labelPosition='right' content='Save' />
+          <Button positive icon='checkmark' labelPosition='right' content='Save' onClick={() => saveTagAction(tag.id, tag)} />
         </Modal.Actions>
       </Modal>
     </React.Fragment>

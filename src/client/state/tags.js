@@ -25,13 +25,13 @@ export const initialState = fromJS({
   streamStatus: new Stream(),
   editingTag: false,
   all: [
-    { id: 1, name: 'foo', created: new Date(), updated: new Date(), isActive: true, values: [] },
-    { id: 2, name: 'bar', created: new Date(), updated: new Date(), isActive: true, values: [] },
-    { id: 3, name: 'baz', created: new Date(), updated: new Date(), isActive: true, values: [] },
-    { id: 4, name: 'cat', created: new Date(), updated: new Date(), isActive: false, values: [] },
-    { id: 5, name: 'miffles', created: new Date(), updated: new Date(), isActive: false, values: [] },
-    { id: 6, name: 'vlad', created: new Date(), updated: new Date(), isActive: true, values: [] },
-    { id: 7, name: 'baxter', created: new Date(), updated: new Date(), isActive: true, values: [] },
+    { id: 1, order: 1, name: 'foo', created: new Date(), updated: new Date(), isActive: true, values: [] },
+    { id: 2, order: 2, name: 'bar', created: new Date(), updated: new Date(), isActive: true, values: [] },
+    { id: 3, order: 3, name: 'baz', created: new Date(), updated: new Date(), isActive: true, values: [] },
+    { id: 4, order: 4, name: 'cat', created: new Date(), updated: new Date(), isActive: false, values: [] },
+    { id: 5, order: 5, name: 'miffles', created: new Date(), updated: new Date(), isActive: false, values: [] },
+    { id: 6, order: 6, name: 'vlad', created: new Date(), updated: new Date(), isActive: true, values: [] },
+    { id: 7, order: 7, name: 'baxter', created: new Date(), updated: new Date(), isActive: true, values: [] },
   ],
 })
 
@@ -95,6 +95,16 @@ export const actionReducers = [
   {
     unsetEditingTag: id => ({ type: 'tags/UNSET_EDITING_TAG' }),
     reducer: (state, action) => state.set('editingTag', false)
+  },
+  {
+    editTag: (id, values) => ({ type: 'tags/EDIT_TAG', id, values }),
+    reducer: (state, action) => state
+                                  .set('editingTag', false)
+                                  .update('all',
+                                    tags => tags.map(tag =>
+                                      tag.get('id') === action.id ? tag.merge(action.values) : tag
+                                    )
+                                  )
   }
 ]
 
