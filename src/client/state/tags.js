@@ -13,6 +13,7 @@ const getTagById = (items, id) => items.find(item => item.get('id') === id)
 const onlyActive = items => items.filter(item => item.get('isActive'))
 const getActiveTags = createSelector(getTags, onlyActive)
 const getEditingTagID = state => state.get('editingTag')
+const asTreeData = items => getTreeFromFlatData({ flatData: items })
 const getEditingTag = state => createSelector(getTags, getEditingTagID, getTagById)
 
 const selectors = {

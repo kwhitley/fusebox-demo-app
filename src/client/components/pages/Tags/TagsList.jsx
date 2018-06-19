@@ -7,7 +7,7 @@ import tags from '../../../state/tags'
 import Chart from './HighChart'
 import AllowEdit from './AllowEdit'
 
-const Tags = ({ tags, setEditingTag, editingTagID, unsetEditingTag, editTag }) => {
+const TagsList = ({ tags, setEditingTag, editingTagID, unsetEditingTag, editTag }) => {
   return (
     <Card.Group className="tags" itemsPerRow={3}>
       {
@@ -40,14 +40,14 @@ const Tags = ({ tags, setEditingTag, editingTagID, unsetEditingTag, editTag }) =
 }
 
 
-Tags.propTypes = {
+TagsList.propTypes = {
   tags: PropTypes.array.isRequired,
   // addItem: PropTypes.func.isRequired,
   // removeItem: PropTypes.func.isRequired,
   // toggleIsActive: PropTypes.func.isRequired,
 }
 
-Tags.defaultProps = {
+TagsList.defaultProps = {
   tags: []
 }
 
@@ -56,6 +56,6 @@ const mapStateToProps = state => ({
   editingTagID: tags.getEditingTagID(state),
 })
 
-export const ConnectedTags = connect(mapStateToProps, tags.actions)(fromImmutable(Tags))
+export const ConnectedTagsList = connect(mapStateToProps, tags.actions)(fromImmutable(TagsList))
 
-export default Tags
+export default TagsList

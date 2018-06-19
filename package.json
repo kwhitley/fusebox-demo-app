@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "predev": "rm -rf .fusebox cache",
     "dev": "node fuse",
-    "prebuild": "npm run lint",
+    "prenothing": "npm run lint",
     "build": "node fuse build",
     "lint": "eslint src --ext .js,.jsx"
   },
@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^2.0.1",
+    "babel-runtime": "^6.26.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.2",
     "env-autoload": "^1.0.1",
@@ -43,6 +44,7 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.4.0",
+    "formik": "^0.11.11",
     "fuse-box": "^3.2.2",
     "highcharts": "^6.1.0",
     "highstock-release": "^6.0.4",
@@ -60,6 +62,7 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
     "react-router-transition": "^1.2.1",
+    "react-sortable-tree": "^2.2.0",
     "react-wrappers": "^1.0.0",
     "recharts": "^1.0.0-beta.10",
     "redux": "^4.0.0",

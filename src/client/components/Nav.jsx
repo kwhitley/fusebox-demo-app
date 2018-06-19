@@ -3,14 +3,14 @@ import { Menu } from 'semantic-ui-react'
 import { NavLink } from 'react-router-dom'
 
 // pages
-import { ConnectedList } from './pages/List'
+import { ConnectedGroupsList } from './pages/Groups'
 import { ConnectedPackage } from './pages/Package'
-import Groups from './pages/Groups'
+import Tags from './pages/Tags'
 
 export const routes = [
-  { path: '/list', name: 'List', component: ConnectedList },
+  { path: '/list', name: 'Groups', component: ConnectedGroupsList },
   { path: '/package', name: 'Package', component: ConnectedPackage },
-  { path: '/groups', name: 'Streaming Tags', component: Groups },
+  { path: '/groups', name: 'Streaming Tags', component: Tags },
 ]
 
 export const Nav = () =>

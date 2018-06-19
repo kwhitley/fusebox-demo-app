@@ -2,13 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Input, Form } from 'semantic-ui-react'
 
-class AddItem extends React.Component {
+class AddGroup extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = { value: 'foo' }
     this.update = this.update.bind(this)
-    this.addItem = this.addItem.bind(this)
+    this.addGroup = this.addGroup.bind(this)
   }
 
   update(e) {
@@ -17,19 +17,19 @@ class AddItem extends React.Component {
     })
   }
 
-  addItem() {
-    let itemName = this.state.value || 'new item'
-    this.props.addItem(itemName)
+  addGroup() {
+    let groupName = this.state.value || 'new item'
+    this.props.addGroup(groupName)
     this.setState({ value: '' })
   }
 
   render() {
     return (
-      <Form onSubmit={this.addItem}>
+      <Form onSubmit={this.addGroup}>
         <Input
           fluid
-          placeholder="New Item"
-          action={{ labelPosition: 'right', icon: 'plus', content: 'Add Item' }}
+          placeholder="New Group"
+          action={{ labelPosition: 'right', icon: 'plus', content: 'Add Group' }}
           actionPosition='left'
           onChange={this.update}
           value={this.state.value}
@@ -39,8 +39,8 @@ class AddItem extends React.Component {
   }
 }
 
-AddItem.propTypes = {
-  addItem: PropTypes.func.isRequired
+AddGroup.propTypes = {
+  addGroup: PropTypes.func.isRequired
 }
 
-export default AddItem
+export default AddGroup

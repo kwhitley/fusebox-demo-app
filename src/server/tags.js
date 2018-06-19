@@ -33,5 +33,5 @@ export const registerTagMessages = io => {
     io.emit('tags/update', { id: tag.id, values: tag.values })
   }
 
-  setInterval(updateTag, 1000)
+  setInterval(updateTag, 5000)
 }

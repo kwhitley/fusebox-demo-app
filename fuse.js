@@ -25,10 +25,10 @@ const clientConfig = isProduction => ({
         sourceMaps: !isProduction,
         presets: [ 'env', 'react' ],
         plugins: [
+          'transform-runtime',
           'transform-class-properties',
           'transform-object-rest-spread',
           'transform-function-bind',
-          'transform-runtime'
         ],
       },
     }),
