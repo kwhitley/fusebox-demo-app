@@ -23,11 +23,11 @@ export const registerTagMessages = io => {
     const activeTags = tags.filter(tag => tag.isActive)
     const tag = activeTags[random(0, activeTags.length - 1)]
     const { values } = tag
-    const lastValue = (values.length && values[values.length-1]) || 0
+    const lastValue = (values.length && values[values.length-1].value) || 0
     const up = Math.random() > 0.5
     const newValue = lastValue + (up ? 1 : -1)
 
-    tag.values = ([ ...tag.values, newValue ]).slice(-VALUE_LIMIT)
+    tag.values = ([ ...tag.values, { value: newValue, date: new Date() }]).slice(-VALUE_LIMIT)
     tag.updated = new Date()
 
     io.emit('tags/update', { id: tag.id, values: tag.values })

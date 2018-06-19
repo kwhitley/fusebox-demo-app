@@ -126,11 +126,11 @@ var registerTagMessages = exports.registerTagMessages = function registerTagMess
     var tag = activeTags[random(0, activeTags.length - 1)];
     var values = tag.values;
 
-    var lastValue = values.length && values[values.length - 1] || 0;
+    var lastValue = values.length && values[values.length - 1].value || 0;
     var up = Math.random() > 0.5;
     var newValue = lastValue + (up ? 1 : -1);
 
-    tag.values = [].concat((0, _toConsumableArray3.default)(tag.values), [newValue]).slice(-VALUE_LIMIT);
+    tag.values = [].concat((0, _toConsumableArray3.default)(tag.values), [{ value: newValue, date: new Date() }]).slice(-VALUE_LIMIT);
     tag.updated = new Date();
 
     io.emit('tags/update', { id: tag.id, values: tag.values });

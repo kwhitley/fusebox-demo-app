@@ -22,7 +22,7 @@ function subscribe(socket) {
       emit(data)
     })
     socket.on('disconnect', () => {
-      Message.warning('Streaming socket disconnected')
+      console.warn('socket disconnected')
     })
     return () => { }
   })

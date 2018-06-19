@@ -9,17 +9,21 @@ import streamingSaga from './tags.streaming'
 export const namespace = 'tags'
 
 const getTags = state => state.get('all')
+const getTagById = (items, id) => items.find(item => item.get('id') === id)
 const onlyActive = items => items.filter(item => item.get('isActive'))
 const getActiveTags = createSelector(getTags, onlyActive)
+const getEditingTagID = state => state.get('editingTag')
+const getEditingTag = state => createSelector(getTags, getEditingTagID, getTagById)
 
 const selectors = {
-  getTags, getActiveTags
+  getTags, getActiveTags, getEditingTag, getEditingTagID
 }
 
 // initial state for reducer
 export const initialState = fromJS({
   tagsLoader: new ApiResource(),
   streamStatus: new Stream(),
+  editingTag: false,
   all: [
     { id: 1, name: 'foo', created: new Date(), updated: new Date(), isActive: true, values: [] },
     { id: 2, name: 'bar', created: new Date(), updated: new Date(), isActive: true, values: [] },
@@ -84,6 +88,14 @@ export const actionReducers = [
     loadTagsError: error => ({ type: 'tags/LOAD_TAGS_ERROR', error }),
     reducer: (state, action) => state.set('tagsLoader', new ApiResource({ error: action.error }))
   },
+  {
+    setEditingTag: id => ({ type: 'tags/SET_EDITING_TAG', id }),
+    reducer: (state, action) => state.set('editingTag', action.id)
+  },
+  {
+    unsetEditingTag: id => ({ type: 'tags/UNSET_EDITING_TAG' }),
+    reducer: (state, action) => state.set('editingTag', false)
+  }
 ]
 
 export default automap({ namespace, actionReducers, initialState, selectors, sagas })

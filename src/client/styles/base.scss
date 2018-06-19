@@ -64,3 +64,17 @@ li {
 .padded {
   padding: 1em;
 }
+
+.tag {
+  .edit-button {
+    visibility: hidden;
+  }
+
+  &:hover .edit-button {
+    visibility: visible;
+  }
+
+  .highcharts-container {
+    height: 15em !important;
+  }
+}
