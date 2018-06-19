@@ -39,19 +39,19 @@ const Group = new Record({
   title: 'new group',
   date: new Date(),
   isActive: false,
-  expanded: true,
+  expanded: false
 })
 
 // initial state for reducer
 export const initialState = fromJS({
   all: [
-    new Group({ id: 1, title: 'foo' }),
-    new Group({ id: 2, title: 'bar' }),
-    new Group({ id: 3, parentId: 2, title: 'baz' }),
-    new Group({ id: 4, parentId: 2, title: 'cat' }),
-    new Group({ id: 5, parentId: 4, title: 'miffles' }),
-    new Group({ id: 6, title: 'vlad' }),
-    new Group({ id: 7, title: 'baxter' }),
+    new Group({ id: 1, title: 'Asset 1' }),
+    new Group({ id: 2, title: 'Asset 2' }),
+    new Group({ id: 3, parentId: 2, title: 'Pump 1' }),
+    new Group({ id: 4, parentId: 2, title: 'Pump 2' }),
+    new Group({ id: 5, parentId: 4, title: 'Specific Tag Group' }),
+    new Group({ id: 6, title: 'Asset 3' }),
+    new Group({ id: 7, title: 'Asset 4' }),
   ],
 })
 

@@ -43,6 +43,7 @@ class GroupOrder extends React.Component {
       <SortableTree
         treeData={treeData}
         onChange={this.orderChanged}
+        rowHeight={58}
         generateNodeProps={(node, path) => ({
           title: <EditableGroup title={node.node.title} id={node.node.id} editGroup={editGroup} />
         })}
