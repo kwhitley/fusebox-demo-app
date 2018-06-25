@@ -12,15 +12,13 @@ const GroupsNavigation = ({ treeData, toggleGroupExpanded, setVisibleGroup }) =>
     treeData={treeData}
     onChange={() => {}}
     rowHeight={52}
-    onVisibilityToggle={({ node, expanded }) => {
-      toggleGroupExpanded(node.id)
-      console.log('toggling group expansion', node, expanded)
-    }}
-    generateNodeProps={(node, path) => ({
+    onVisibilityToggle={({ node, expanded }) => toggleGroupExpanded(node.id)}
+    generateNodeProps={({ node }, path) => ({
       title: <SelectableGroup
-                selectGroupAction={() => setVisibleGroup(node.node.id)}
-                active={node.node.isVisible}
-                title={node.node.title}
+                selectGroupAction={() => setVisibleGroup(node.id)}
+                id={node.id}
+                active={node.isVisible}
+                title={node.title}
               />
     })}
     onClick={() => alert('clicked')}
