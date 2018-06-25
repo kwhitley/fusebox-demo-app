@@ -136,7 +136,7 @@ var registerTagMessages = exports.registerTagMessages = function registerTagMess
     io.emit('tags/update', { id: tag.id, values: tag.values });
   };
 
-  setInterval(updateTag, 50);
+  setInterval(updateTag, 1000);
 };
 });
 return ___scope___.entry = "server/index.js";

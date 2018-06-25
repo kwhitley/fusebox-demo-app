@@ -106,8 +106,43 @@ li {
   }
 }
 
-.tag-groups-tree {
+.tag-groups-tree, .edit-groups-tree {
   .rst__rowContents {
     min-width: auto;
   }
+}
+
+.group.selectable {
+
+  font-weight: normal;
+
+  &:hover {
+    color: #3090C5;
+  }
+
+
+  &.active {
+    font-weight: bold;
+    color: #3090C5;
+  }
+}
+
+.groups-panel {
+  padding-right: 3em;
+
+  .edit-button {
+    top: 0.3em;
+    right: 0.8em;
+  }
+}
+
+.selectable {
+  cursor: pointer;
+}
+
+.abs-top-right {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  right: 0;
 }

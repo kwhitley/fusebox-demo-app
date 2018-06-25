@@ -6,6 +6,7 @@ import { getTreeFromFlatData } from 'react-sortable-tree'
 export const namespace = 'groups'
 
 const getGroups = state => state.get('all')
+const getIsEditing = state => state.get('isEditing')
 const getNumGroups = state => state.get('all').size
 const getHalfGroups = (groups, number) => groups.slice(0, Math.floor(number / 2))
 const asTreeData = groups => getTreeFromFlatData({ flatData: groups.toJS(), rootKey: null })
@@ -30,7 +31,13 @@ const getHalfGroupsSorted = createSelector(
 )
 
 export const selectors = {
-  getGroups, getNumGroups, getGroupsSorted, getHalfGroupsUnsorted, getHalfGroupsSorted, getTreeData
+  getIsEditing,
+  getGroups,
+  getNumGroups,
+  getGroupsSorted,
+  getHalfGroupsUnsorted,
+  getHalfGroupsSorted,
+  getTreeData
 }
 
 const Group = new Record({
@@ -39,13 +46,13 @@ const Group = new Record({
   title: 'new group',
   date: new Date(),
   isActive: false,
+  isVisible: false,
   expanded: false
 })
 
 // initial state for reducer
 export const initialState = fromJS({
-  modeEditingOrder: false,
-  modeAddingGroup: false,
+  isEditing: false,
   all: [
     new Group({ id: 1, title: 'Asset 1' }),
     new Group({ id: 2, title: 'Asset 2' }),
@@ -72,12 +79,12 @@ export const actionReducers = [
     }
   },
   {
-    setEditingOrder: (value) => ({ type: 'groups/SET_MODE_EDITING_ORDER', value }),
-    reducer: (state, action) => state.set('modeEditingOrder', action.value)
+    toggleIsEditing: () => ({ type: 'groups/TOGGLE_IS_EDITING' }),
+    reducer: state => state.set('isEditing', !state.get('isEditing'))
   },
   {
-    setAddingGroup: (value) => ({ type: 'groups/SET_MODE_ADDING_GROUP', value }),
-    reducer: (state, action) => state.set('modeAddingGroup', action.value)
+    setVisibleGroup: id => ({ type: 'groups/SET_VISIBLE_GROUP', id }),
+    reducer: (state, action) => state.update('all', groups => groups.map(group => group.set('isVisible', group.get('id') === action.id)))
   },
   {
     toggleIsActive: id => ({ type: 'groups/TOGGLE_GROUP_IS_ACTIVE', id }),

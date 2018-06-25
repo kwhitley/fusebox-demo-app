@@ -41,6 +41,7 @@ class GroupOrder extends React.Component {
 
     return (
       <SortableTree
+        className="edit-groups-tree"
         treeData={treeData}
         onChange={this.orderChanged}
         rowHeight={58}
