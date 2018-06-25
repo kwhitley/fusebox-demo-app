@@ -8,10 +8,10 @@ const cards = Array(7).fill(0).map(i => ({ name: `Tag #${Math.random().toString(
 const Groups = () =>
   <Grid divided>
     <Grid.Row>
-      <Grid.Column width={6}>
+      <Grid.Column width={5}>
         <ConnectedGroups />
       </Grid.Column>
-      <Grid.Column width={10}>
+      <Grid.Column width={11}>
         <ConnectedTagsList />
       </Grid.Column>
     </Grid.Row>

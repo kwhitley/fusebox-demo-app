@@ -152,3 +152,13 @@ li {
   font-size: 1.2em !important;
   padding-bottom: 1em;
 }
+
+// SORTABLE TREE TO EM
+
+.rst__rowWrapper {
+  padding: 0.5em 0.5em 0.5em 0;
+}
+
+.rst__moveHandle, .rst__loadingHandle {
+  width: 2.2em;
+}
