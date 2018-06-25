@@ -11,7 +11,7 @@ const GroupsNavigation = ({ treeData, toggleGroupExpanded, setVisibleGroup }) =>
     className="tag-groups-tree"
     treeData={treeData}
     onChange={() => {}}
-    rowHeight={52}
+    rowHeight={48}
     onVisibilityToggle={({ node, expanded }) => toggleGroupExpanded(node.id)}
     generateNodeProps={({ node }, path) => ({
       title: <SelectableGroup

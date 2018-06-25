@@ -37,6 +37,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "decorator": "^0.0.1",
+    "echarts-for-react": "^2.0.13",
     "eslint": "^4.9.0",
     "eslint-config-airbnb": "16.1.0",
     "eslint-plugin-babel": "^5.1.0",

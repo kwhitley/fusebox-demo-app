@@ -6,11 +6,29 @@ import { getTreeFromFlatData } from 'react-sortable-tree'
 export const namespace = 'groups'
 
 const getGroups = state => state.get('all')
+const getGroupById = (groups, id) => groups.find(i => i.get('id') === id)
+const getVisibleGroup = createSelector(getGroups, items => items.find(i => i.get('isVisible')))
 const getIsEditing = state => state.get('isEditing')
 const getNumGroups = state => state.get('all').size
 const getHalfGroups = (groups, number) => groups.slice(0, Math.floor(number / 2))
 const asTreeData = groups => getTreeFromFlatData({ flatData: groups.toJS(), rootKey: null })
 const getTreeData = createSelector(getGroups, asTreeData)
+const createTrail = (groups, node, trail = List()) => {
+  if (!node) {
+    return trail
+  }
+
+  const parentId = node.get('parentId')
+
+  trail = trail.unshift(node)
+
+  if (!parentId) {
+    return trail
+  }
+
+  return createTrail(groups, getGroupById(groups, parentId), trail)
+}
+const getBreadcrumbs = createSelector(getGroups, getVisibleGroup, createTrail)
 
 const getGroupsSorted = createSelector(
   [ getGroups ],
@@ -37,7 +55,9 @@ export const selectors = {
   getGroupsSorted,
   getHalfGroupsUnsorted,
   getHalfGroupsSorted,
-  getTreeData
+  getTreeData,
+  getVisibleGroup,
+  getBreadcrumbs
 }
 
 const Group = new Record({
