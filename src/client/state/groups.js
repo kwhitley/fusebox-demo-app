@@ -44,6 +44,8 @@ const Group = new Record({
 
 // initial state for reducer
 export const initialState = fromJS({
+  modeEditingOrder: false,
+  modeAddingGroup: false,
   all: [
     new Group({ id: 1, title: 'Asset 1' }),
     new Group({ id: 2, title: 'Asset 2' }),
@@ -68,6 +70,14 @@ export const actionReducers = [
         date: new Date(),
       })))
     }
+  },
+  {
+    setEditingOrder: (value) => ({ type: 'groups/SET_MODE_EDITING_ORDER', value }),
+    reducer: (state, action) => state.set('modeEditingOrder', action.value)
+  },
+  {
+    setAddingGroup: (value) => ({ type: 'groups/SET_MODE_ADDING_GROUP', value }),
+    reducer: (state, action) => state.set('modeAddingGroup', action.value)
   },
   {
     toggleIsActive: id => ({ type: 'groups/TOGGLE_GROUP_IS_ACTIVE', id }),

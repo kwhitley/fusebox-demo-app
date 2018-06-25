@@ -1,6 +1,6 @@
 import React from 'react'
 import { Grid, Container, Sidebar, Segment, Menu, Card } from 'semantic-ui-react'
-import { ConnectedGroupsNavigation } from './GroupsNavigation'
+import { ConnectedGroups } from '../Groups'
 import { ConnectedTagsList } from './TagsList'
 
 const cards = Array(7).fill(0).map(i => ({ name: `Tag #${Math.random().toString().slice(0, 6)}` }))
@@ -9,7 +9,7 @@ const Groups = () =>
   <Grid divided>
     <Grid.Row>
       <Grid.Column width={6}>
-        <ConnectedGroupsNavigation />
+        <ConnectedGroups />
       </Grid.Column>
       <Grid.Column width={10}>
         <ConnectedTagsList />

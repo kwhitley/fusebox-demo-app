@@ -1,70 +1,27 @@
 import React from 'react'
+import SortableTree from 'react-sortable-tree'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { fromImmutable } from 'react-wrappers'
-import { Divider, Table } from 'semantic-ui-react'
-import GroupRow from './GroupRow'
-import AddGroup from './AddGroup'
-import GroupOrder from './GroupOrder'
 import groups from '../../../state/groups'
 
-const GroupsList = ({ groups = [], groupsTreeData, addGroup, removeGroup, toggleIsActive, reorderGroups, editGroup }) => {
-  return (
-    <React.Fragment>
-      <AddGroup addGroup={addGroup} />
-      <Divider horizontal>{ groups.length } Items</Divider>
-
-      {
-        /*
-          <Table compact celled definition>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell />
-                <Table.HeaderCell>Id</Table.HeaderCell>
-                <Table.HeaderCell>Name</Table.HeaderCell>
-                <Table.HeaderCell>Created</Table.HeaderCell>
-                <Table.HeaderCell>Active</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {
-                groups.map(group => <GroupRow
-                                    key={group.id}
-                                    group={group}
-                                    removeGroup={() => removeGroup(group.id)}
-                                    toggleIsActive={() => toggleIsActive(group.id)}
-                                  />
-                          )
-              }
-            </Table.Body>
-          </Table>
-        */
-      }
-
-
-      <GroupOrder
-        groups={groups}
-        treeData={groupsTreeData}
-        reorderGroups={reorderGroups}
-        editGroup={editGroup}
-      />
-    </React.Fragment>
-  )
-}
-
-GroupsList.propTypes = {
-  groups: PropTypes.array.isRequired,
-  addGroup: PropTypes.func.isRequired,
-  removeGroup: PropTypes.func.isRequired,
-  toggleIsActive: PropTypes.func.isRequired,
-}
+const Groups = ({ treeData, toggleGroupExpanded }) =>
+  <SortableTree
+    className="tag-groups-tree"
+    treeData={treeData}
+    onChange={() => {}}
+    rowHeight={52}
+    onVisibilityToggle={({ node, expanded }) => {
+      toggleGroupExpanded(node.id)
+      console.log('toggling group expansion', node, expanded)
+    }}
+    canDrag={false}
+    />
 
 const mapStateToProps = state => ({
-  groups: groups.getGroups(state),
-  groupsTreeData: groups.getTreeData(state)
+  treeData: groups.getTreeData(state)
 })
 
-export const ConnectedGroupsList = connect(mapStateToProps, groups.actions)(fromImmutable(GroupsList))
+export const ConnectedGroups = connect(mapStateToProps, groups.actions)(fromImmutable(Groups))
 
-export default GroupsList
+export default Groups

@@ -1,4 +1,5 @@
 import 'semantic-ui-css/semantic.min.css'
+import 'react-sortable-tree/style.css'
 // import 'antd/dist/antd.min.css'
 
 import React from 'react'
