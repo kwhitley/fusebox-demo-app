@@ -15,15 +15,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "app-root-path": "^2.0.1",
     "body-parser": "^1.18.3",
     "compression": "^1.7.2",
     "env-autoload": "^1.0.1",
     "express": "^4.16.3"
   },
   "devDependencies": {
-    "antd": "^3.6.2",
-    "autobind": "^1.0.3",
     "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.3",
@@ -34,7 +31,6 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "decorator": "^0.0.1",
     "eslint": "^4.9.0",
     "eslint-config-airbnb": "16.1.0",
     "eslint-plugin-babel": "^5.1.0",

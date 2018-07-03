@@ -7,6 +7,8 @@ import Dependencies from './Dependencies'
 import ErrorMessage from '../../messages/ErrorMessage'
 import api from '../../../state/api'
 
+// this page simulates an API request that may or may not fail en-route
+
 const Package = ({ pkg, deps, devDeps, timesLoaded, loadPackageInfo }) =>
   <div className="package-loader">
     <Button fluid disabled={pkg.isLoading} onClick={loadPackageInfo} loading={pkg.isLoading}>
