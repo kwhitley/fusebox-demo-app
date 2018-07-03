@@ -7,6 +7,10 @@ ___scope___.file("client/index.jsx", function(exports, require, module, __filena
 
 require('semantic-ui-css/semantic.min.css');
 
+require('./styles/base.scss');
+
+require('./styles/base.less');
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -15,101 +19,45 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reduxImmutable = require('redux-immutable');
-
-var _redux = require('redux');
-
 var _reactRedux = require('react-redux');
 
 var _reactRouterDom = require('react-router-dom');
-
-var _reduxSaga = require('redux-saga');
-
-var _reduxSaga2 = _interopRequireDefault(_reduxSaga);
-
-var _createBrowserHistory = require('history/createBrowserHistory');
-
-var _createBrowserHistory2 = _interopRequireDefault(_createBrowserHistory);
-
-var _reduxAutomap = require('redux-automap');
 
 var _App = require('./components/App');
 
 var _App2 = _interopRequireDefault(_App);
 
-var _api = require('./state/api');
+var _store = require('./store');
 
-var _api2 = _interopRequireDefault(_api);
-
-var _list = require('./state/list');
-
-var _list2 = _interopRequireDefault(_list);
-
-var _route = require('./state/route');
-
-var _route2 = _interopRequireDefault(_route);
-
-require('./styles/base.scss');
-
-require('./styles/base.less');
+var _store2 = _interopRequireDefault(_store);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-(function () {
-  var enterModule = require('react-hot-loader').enterModule;
+// local imports
+// example LESS parsing
 
-  enterModule && enterModule(module);
-})();
-// import 'antd/dist/antd.min.css'
-
-var mergedReducers = (0, _reduxAutomap.merge)([_api2.default, _list2.default, _route2.default]);
-var history = (0, _createBrowserHistory2.default)();
-var sagaMiddleware = (0, _reduxSaga2.default)();
-var rootReducer = (0, _reduxImmutable.combineReducers)(mergedReducers);
-var store = (0, _redux.createStore)(rootReducer, (0, _redux.compose)((0, _redux.applyMiddleware)(sagaMiddleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
-
-// history binding... messy, abstract elsewhere or turn into module
-history.listen(function (location) {
-  var path = '' + location.pathname + location.search + location.hash;
-  store.dispatch(_route2.default.actions.change(path));
-});
-
-var path = '' + location.pathname + location.search + location.hash;
-store.dispatch(_route2.default.actions.change(path));
-
-// register sagas
-sagaMiddleware.run(_api2.default.sagas.watcherSaga);
-
-_reactDom2.default.render(_react2.default.createElement(
+// global imports
+// load base styles
+_reactDom2.default.render( // bootstrap the app
+_react2.default.createElement(
   _reactRedux.Provider,
-  { store: store },
+  { store: _store2.default },
   _react2.default.createElement(
     _reactRouterDom.HashRouter,
     null,
     _react2.default.createElement(_App2.default, null)
   )
-), document.getElementById('app'));
-;
+), document.getElementById('app')); // example SASS parsing
+});
+___scope___.file("client/styles/base.scss", function(exports, require, module, __filename, __dirname){
 
-(function () {
-  var reactHotLoader = require('react-hot-loader').default;
 
-  var leaveModule = require('react-hot-loader').leaveModule;
+require("fuse-box-css")("client/styles/base.scss", "body {\n  color: #222;\n  font-family: sans-serif;\n  font-weight: lighter;\n  height: 100%;\n  width: 100%;\n  position: relative; }\n  body:before {\n    content: '';\n    z-index: -1;\n    position: absolute;\n    height: 100%;\n    width: 100%;\n    opacity: 0.2; }\n  body #app {\n    padding: 1em 2em; }\n\n.navigation:hover .item {\n  border-bottom-color: transparent !important; }\n\n.navigation .item {\n  transition: all 0.3s ease !important; }\n  .navigation .item:hover {\n    border-color: #1b1c1d !important; }\n\n.cards > .card {\n  box-shadow: none !important; }\n\n.page-content {\n  padding-top: 1em; }\n\nul {\n  list-style-type: none;\n  padding: 0; }\n\nli {\n  margin-bottom: 0.5em; }\n\n.pages {\n  position: relative; }\n  .pages > * {\n    position: absolute;\n    width: 100%; }\n\n.padded {\n  padding: 1em; }\n\n/*# sourceMappingURL=/css-sourcemaps/3143e84.map */")
+});
+___scope___.file("client/styles/base.less", function(exports, require, module, __filename, __dirname){
 
-  if (!reactHotLoader) {
-    return;
-  }
 
-  reactHotLoader.register(mergedReducers, 'mergedReducers', 'unknown');
-  reactHotLoader.register(history, 'history', 'unknown');
-  reactHotLoader.register(sagaMiddleware, 'sagaMiddleware', 'unknown');
-  reactHotLoader.register(rootReducer, 'rootReducer', 'unknown');
-  reactHotLoader.register(store, 'store', 'unknown');
-  reactHotLoader.register(path, 'path', 'unknown');
-  leaveModule(module);
-})();
-
-;
+require("fuse-box-css")("client/styles/base.less", "body {\n  color: #222;\n}\n")
 });
 ___scope___.file("client/components/App.jsx", function(exports, require, module, __filename, __dirname){
 
@@ -146,7 +94,7 @@ var App = function App() {
     _react2.default.createElement(
       'h1',
       null,
-      'FuseBox Workflow Demo'
+      'FuseBox Boilerplate'
     ),
     _react2.default.createElement(_Nav2.default, null),
     _react2.default.createElement(
@@ -1340,6 +1288,91 @@ exports.default = _default;
 
 ;
 });
+___scope___.file("client/store.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _reduxImmutable = require('redux-immutable');
+
+var _redux = require('redux');
+
+var _reduxSaga = require('redux-saga');
+
+var _reduxSaga2 = _interopRequireDefault(_reduxSaga);
+
+var _createBrowserHistory = require('history/createBrowserHistory');
+
+var _createBrowserHistory2 = _interopRequireDefault(_createBrowserHistory);
+
+var _reduxAutomap = require('redux-automap');
+
+var _api = require('./state/api');
+
+var _api2 = _interopRequireDefault(_api);
+
+var _list = require('./state/list');
+
+var _list2 = _interopRequireDefault(_list);
+
+var _route = require('./state/route');
+
+var _route2 = _interopRequireDefault(_route);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(function () {
+  var enterModule = require('react-hot-loader').enterModule;
+
+  enterModule && enterModule(module);
+})();
+
+var mergedReducers = (0, _reduxAutomap.merge)([_api2.default, _list2.default, _route2.default]);
+var history = (0, _createBrowserHistory2.default)();
+var sagaMiddleware = (0, _reduxSaga2.default)();
+var rootReducer = (0, _reduxImmutable.combineReducers)(mergedReducers);
+var store = (0, _redux.createStore)(rootReducer, (0, _redux.compose)((0, _redux.applyMiddleware)(sagaMiddleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
+
+// history binding... messy, abstract elsewhere or turn into module
+history.listen(function (location) {
+  var path = '' + location.pathname + location.search + location.hash;
+  store.dispatch(_route2.default.actions.change(path));
+});
+
+var path = '' + location.pathname + location.search + location.hash;
+store.dispatch(_route2.default.actions.change(path));
+
+// register sagas
+sagaMiddleware.run(_api2.default.sagas.watcherSaga);
+
+var _default = store;
+exports.default = _default;
+;
+
+(function () {
+  var reactHotLoader = require('react-hot-loader').default;
+
+  var leaveModule = require('react-hot-loader').leaveModule;
+
+  if (!reactHotLoader) {
+    return;
+  }
+
+  reactHotLoader.register(mergedReducers, 'mergedReducers', 'unknown');
+  reactHotLoader.register(history, 'history', 'unknown');
+  reactHotLoader.register(sagaMiddleware, 'sagaMiddleware', 'unknown');
+  reactHotLoader.register(rootReducer, 'rootReducer', 'unknown');
+  reactHotLoader.register(store, 'store', 'unknown');
+  reactHotLoader.register(path, 'path', 'unknown');
+  reactHotLoader.register(_default, 'default', 'unknown');
+  leaveModule(module);
+})();
+
+;
+});
 ___scope___.file("client/state/route.js", function(exports, require, module, __filename, __dirname){
 
 'use strict';
@@ -1394,16 +1427,6 @@ exports.default = _default;
 })();
 
 ;
-});
-___scope___.file("client/styles/base.scss", function(exports, require, module, __filename, __dirname){
-
-
-require("fuse-box-css")("client/styles/base.scss", "body {\n  color: #222;\n  font-family: sans-serif;\n  font-weight: lighter;\n  height: 100%;\n  width: 100%;\n  position: relative; }\n  body:before {\n    content: '';\n    z-index: -1;\n    position: absolute;\n    height: 100%;\n    width: 100%;\n    opacity: 0.2; }\n  body #app {\n    padding: 1em 2em; }\n\n.navigation:hover .item {\n  border-bottom-color: transparent !important; }\n\n.navigation .item {\n  transition: all 0.3s ease !important; }\n  .navigation .item:hover {\n    border-color: #1b1c1d !important; }\n\n.cards > .card {\n  box-shadow: none !important; }\n\n.page-content {\n  padding-top: 1em; }\n\nul {\n  list-style-type: none;\n  padding: 0; }\n\nli {\n  margin-bottom: 0.5em; }\n\n.pages {\n  position: relative; }\n  .pages > * {\n    position: absolute;\n    width: 100%; }\n\n.padded {\n  padding: 1em; }\n\n/*# sourceMappingURL=/css-sourcemaps/3143e84.map */")
-});
-___scope___.file("client/styles/base.less", function(exports, require, module, __filename, __dirname){
-
-
-require("fuse-box-css")("client/styles/base.less", "body {\n  color: #222;\n}\n")
 });
 return ___scope___.entry = "client/index.jsx";
 });
@@ -52031,185 +52054,440 @@ module.exports = exports['default'];
 return ___scope___.entry = "dist/index.js";
 });
 FuseBox.pkg("redux-saga", {}, function(___scope___){
-___scope___.file("lib/index.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("lib/effects.js", function(exports, require, module, __filename, __dirname){
 
 'use strict';
 
 exports.__esModule = true;
-exports.utils = exports.effects = exports.detach = exports.CANCEL = exports.delay = exports.throttle = exports.takeLatest = exports.takeEvery = exports.buffers = exports.channel = exports.eventChannel = exports.END = exports.runSaga = undefined;
 
-var _runSaga = /*#__PURE__*/require('./internal/runSaga');
+var _io = /*#__PURE__*/require('./internal/io');
 
-Object.defineProperty(exports, 'runSaga', {
+Object.defineProperty(exports, 'take', {
   enumerable: true,
   get: function get() {
-    return _runSaga.runSaga;
+    return _io.take;
   }
 });
-
-var _channel = /*#__PURE__*/require('./internal/channel');
-
-Object.defineProperty(exports, 'END', {
+Object.defineProperty(exports, 'takem', {
   enumerable: true,
   get: function get() {
-    return _channel.END;
+    return _io.takem;
   }
 });
-Object.defineProperty(exports, 'eventChannel', {
+Object.defineProperty(exports, 'put', {
   enumerable: true,
   get: function get() {
-    return _channel.eventChannel;
+    return _io.put;
   }
 });
-Object.defineProperty(exports, 'channel', {
+Object.defineProperty(exports, 'all', {
   enumerable: true,
   get: function get() {
-    return _channel.channel;
+    return _io.all;
   }
 });
-
-var _buffers = /*#__PURE__*/require('./internal/buffers');
-
-Object.defineProperty(exports, 'buffers', {
+Object.defineProperty(exports, 'race', {
   enumerable: true,
   get: function get() {
-    return _buffers.buffers;
+    return _io.race;
   }
 });
-
-var _sagaHelpers = /*#__PURE__*/require('./internal/sagaHelpers');
-
+Object.defineProperty(exports, 'call', {
+  enumerable: true,
+  get: function get() {
+    return _io.call;
+  }
+});
+Object.defineProperty(exports, 'apply', {
+  enumerable: true,
+  get: function get() {
+    return _io.apply;
+  }
+});
+Object.defineProperty(exports, 'cps', {
+  enumerable: true,
+  get: function get() {
+    return _io.cps;
+  }
+});
+Object.defineProperty(exports, 'fork', {
+  enumerable: true,
+  get: function get() {
+    return _io.fork;
+  }
+});
+Object.defineProperty(exports, 'spawn', {
+  enumerable: true,
+  get: function get() {
+    return _io.spawn;
+  }
+});
+Object.defineProperty(exports, 'join', {
+  enumerable: true,
+  get: function get() {
+    return _io.join;
+  }
+});
+Object.defineProperty(exports, 'cancel', {
+  enumerable: true,
+  get: function get() {
+    return _io.cancel;
+  }
+});
+Object.defineProperty(exports, 'select', {
+  enumerable: true,
+  get: function get() {
+    return _io.select;
+  }
+});
+Object.defineProperty(exports, 'actionChannel', {
+  enumerable: true,
+  get: function get() {
+    return _io.actionChannel;
+  }
+});
+Object.defineProperty(exports, 'cancelled', {
+  enumerable: true,
+  get: function get() {
+    return _io.cancelled;
+  }
+});
+Object.defineProperty(exports, 'flush', {
+  enumerable: true,
+  get: function get() {
+    return _io.flush;
+  }
+});
+Object.defineProperty(exports, 'getContext', {
+  enumerable: true,
+  get: function get() {
+    return _io.getContext;
+  }
+});
+Object.defineProperty(exports, 'setContext', {
+  enumerable: true,
+  get: function get() {
+    return _io.setContext;
+  }
+});
 Object.defineProperty(exports, 'takeEvery', {
   enumerable: true,
   get: function get() {
-    return _sagaHelpers.takeEvery;
+    return _io.takeEvery;
   }
 });
 Object.defineProperty(exports, 'takeLatest', {
   enumerable: true,
   get: function get() {
-    return _sagaHelpers.takeLatest;
+    return _io.takeLatest;
   }
 });
 Object.defineProperty(exports, 'throttle', {
   enumerable: true,
   get: function get() {
-    return _sagaHelpers.throttle;
+    return _io.throttle;
   }
 });
-
-var _utils = /*#__PURE__*/require('./internal/utils');
-
-Object.defineProperty(exports, 'delay', {
-  enumerable: true,
-  get: function get() {
-    return _utils.delay;
-  }
 });
-Object.defineProperty(exports, 'CANCEL', {
-  enumerable: true,
-  get: function get() {
-    return _utils.CANCEL;
-  }
-});
+___scope___.file("lib/internal/io.js", function(exports, require, module, __filename, __dirname){
 
-var _io = /*#__PURE__*/require('./internal/io');
-
-Object.defineProperty(exports, 'detach', {
-  enumerable: true,
-  get: function get() {
-    return _io.detach;
-  }
-});
-
-var _middleware = /*#__PURE__*/require('./internal/middleware');
-
-var _middleware2 = /*#__PURE__*/_interopRequireDefault(_middleware);
-
-var _effects = /*#__PURE__*/require('./effects');
-
-var effects = /*#__PURE__*/_interopRequireWildcard(_effects);
-
-var _utils2 = /*#__PURE__*/require('./utils');
-
-var utils = /*#__PURE__*/_interopRequireWildcard(_utils2);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _middleware2.default;
-exports.effects = effects;
-exports.utils = utils;
-});
-___scope___.file("lib/internal/runSaga.js", function(exports, require, module, __filename, __dirname){
-/* fuse:injection: */ var process = require("process");
 'use strict';
 
 exports.__esModule = true;
-exports.runSaga = runSaga;
+exports.asEffect = exports.takem = exports.detach = undefined;
+exports.take = take;
+exports.put = put;
+exports.all = all;
+exports.race = race;
+exports.call = call;
+exports.apply = apply;
+exports.cps = cps;
+exports.fork = fork;
+exports.spawn = spawn;
+exports.join = join;
+exports.cancel = cancel;
+exports.select = select;
+exports.actionChannel = actionChannel;
+exports.cancelled = cancelled;
+exports.flush = flush;
+exports.getContext = getContext;
+exports.setContext = setContext;
+exports.takeEvery = takeEvery;
+exports.takeLatest = takeLatest;
+exports.throttle = throttle;
 
 var _utils = /*#__PURE__*/require('./utils');
 
-var _proc = /*#__PURE__*/require('./proc');
+var _sagaHelpers = /*#__PURE__*/require('./sagaHelpers');
 
-var _proc2 = /*#__PURE__*/_interopRequireDefault(_proc);
+var IO = /*#__PURE__*/(0, _utils.sym)('IO');
+var TAKE = 'TAKE';
+var PUT = 'PUT';
+var ALL = 'ALL';
+var RACE = 'RACE';
+var CALL = 'CALL';
+var CPS = 'CPS';
+var FORK = 'FORK';
+var JOIN = 'JOIN';
+var CANCEL = 'CANCEL';
+var SELECT = 'SELECT';
+var ACTION_CHANNEL = 'ACTION_CHANNEL';
+var CANCELLED = 'CANCELLED';
+var FLUSH = 'FLUSH';
+var GET_CONTEXT = 'GET_CONTEXT';
+var SET_CONTEXT = 'SET_CONTEXT';
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var TEST_HINT = '\n(HINT: if you are getting this errors in tests, consider using createMockTask from redux-saga/utils)';
 
-var RUN_SAGA_SIGNATURE = 'runSaga(storeInterface, saga, ...args)';
-var NON_GENERATOR_ERR = RUN_SAGA_SIGNATURE + ': saga argument must be a Generator function!';
+var effect = function effect(type, payload) {
+  var _ref;
 
-function runSaga(storeInterface, saga) {
-  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-    args[_key - 2] = arguments[_key];
+  return _ref = {}, _ref[IO] = true, _ref[type] = payload, _ref;
+};
+
+var detach = exports.detach = function detach(eff) {
+  (0, _utils.check)(asEffect.fork(eff), _utils.is.object, 'detach(eff): argument must be a fork effect');
+  eff[FORK].detached = true;
+  return eff;
+};
+
+function take() {
+  var patternOrChannel = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '*';
+
+  if (arguments.length) {
+    (0, _utils.check)(arguments[0], _utils.is.notUndef, 'take(patternOrChannel): patternOrChannel is undefined');
   }
-
-  var iterator = void 0;
-
-  if (_utils.is.iterator(storeInterface)) {
-    if (process.env.NODE_ENV === 'development') {
-      (0, _utils.log)('warn', 'runSaga(iterator, storeInterface) has been deprecated in favor of ' + RUN_SAGA_SIGNATURE);
-    }
-    iterator = storeInterface;
-    storeInterface = saga;
-  } else {
-    (0, _utils.check)(saga, _utils.is.func, NON_GENERATOR_ERR);
-    iterator = saga.apply(undefined, args);
-    (0, _utils.check)(iterator, _utils.is.iterator, NON_GENERATOR_ERR);
+  if (_utils.is.pattern(patternOrChannel)) {
+    return effect(TAKE, { pattern: patternOrChannel });
   }
-
-  var _storeInterface = storeInterface,
-      subscribe = _storeInterface.subscribe,
-      dispatch = _storeInterface.dispatch,
-      getState = _storeInterface.getState,
-      context = _storeInterface.context,
-      sagaMonitor = _storeInterface.sagaMonitor,
-      logger = _storeInterface.logger,
-      onError = _storeInterface.onError;
-
-
-  var effectId = (0, _utils.uid)();
-
-  if (sagaMonitor) {
-    // monitors are expected to have a certain interface, let's fill-in any missing ones
-    sagaMonitor.effectTriggered = sagaMonitor.effectTriggered || _utils.noop;
-    sagaMonitor.effectResolved = sagaMonitor.effectResolved || _utils.noop;
-    sagaMonitor.effectRejected = sagaMonitor.effectRejected || _utils.noop;
-    sagaMonitor.effectCancelled = sagaMonitor.effectCancelled || _utils.noop;
-    sagaMonitor.actionDispatched = sagaMonitor.actionDispatched || _utils.noop;
-
-    sagaMonitor.effectTriggered({ effectId: effectId, root: true, parentEffectId: 0, effect: { root: true, saga: saga, args: args } });
+  if (_utils.is.channel(patternOrChannel)) {
+    return effect(TAKE, { channel: patternOrChannel });
   }
-
-  var task = (0, _proc2.default)(iterator, subscribe, (0, _utils.wrapSagaDispatch)(dispatch), getState, context, { sagaMonitor: sagaMonitor, logger: logger, onError: onError }, effectId, saga.name);
-
-  if (sagaMonitor) {
-    sagaMonitor.effectResolved(effectId, task);
-  }
-
-  return task;
+  throw new Error('take(patternOrChannel): argument ' + String(patternOrChannel) + ' is not valid channel or a valid pattern');
 }
+
+take.maybe = function () {
+  var eff = take.apply(undefined, arguments);
+  eff[TAKE].maybe = true;
+  return eff;
+};
+
+var takem = /*#__PURE__*/exports.takem = (0, _utils.deprecate)(take.maybe, /*#__PURE__*/(0, _utils.updateIncentive)('takem', 'take.maybe'));
+
+function put(channel, action) {
+  if (arguments.length > 1) {
+    (0, _utils.check)(channel, _utils.is.notUndef, 'put(channel, action): argument channel is undefined');
+    (0, _utils.check)(channel, _utils.is.channel, 'put(channel, action): argument ' + channel + ' is not a valid channel');
+    (0, _utils.check)(action, _utils.is.notUndef, 'put(channel, action): argument action is undefined');
+  } else {
+    (0, _utils.check)(channel, _utils.is.notUndef, 'put(action): argument action is undefined');
+    action = channel;
+    channel = null;
+  }
+  return effect(PUT, { channel: channel, action: action });
+}
+
+put.resolve = function () {
+  var eff = put.apply(undefined, arguments);
+  eff[PUT].resolve = true;
+  return eff;
+};
+
+put.sync = /*#__PURE__*/(0, _utils.deprecate)(put.resolve, /*#__PURE__*/(0, _utils.updateIncentive)('put.sync', 'put.resolve'));
+
+function all(effects) {
+  return effect(ALL, effects);
+}
+
+function race(effects) {
+  return effect(RACE, effects);
+}
+
+function getFnCallDesc(meth, fn, args) {
+  (0, _utils.check)(fn, _utils.is.notUndef, meth + ': argument fn is undefined');
+
+  var context = null;
+  if (_utils.is.array(fn)) {
+    var _fn = fn;
+    context = _fn[0];
+    fn = _fn[1];
+  } else if (fn.fn) {
+    var _fn2 = fn;
+    context = _fn2.context;
+    fn = _fn2.fn;
+  }
+  if (context && _utils.is.string(fn) && _utils.is.func(context[fn])) {
+    fn = context[fn];
+  }
+  (0, _utils.check)(fn, _utils.is.func, meth + ': argument ' + fn + ' is not a function');
+
+  return { context: context, fn: fn, args: args };
+}
+
+function call(fn) {
+  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    args[_key - 1] = arguments[_key];
+  }
+
+  return effect(CALL, getFnCallDesc('call', fn, args));
+}
+
+function apply(context, fn) {
+  var args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+  return effect(CALL, getFnCallDesc('apply', { context: context, fn: fn }, args));
+}
+
+function cps(fn) {
+  for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    args[_key2 - 1] = arguments[_key2];
+  }
+
+  return effect(CPS, getFnCallDesc('cps', fn, args));
+}
+
+function fork(fn) {
+  for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+    args[_key3 - 1] = arguments[_key3];
+  }
+
+  return effect(FORK, getFnCallDesc('fork', fn, args));
+}
+
+function spawn(fn) {
+  for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+    args[_key4 - 1] = arguments[_key4];
+  }
+
+  return detach(fork.apply(undefined, [fn].concat(args)));
+}
+
+function join() {
+  for (var _len5 = arguments.length, tasks = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    tasks[_key5] = arguments[_key5];
+  }
+
+  if (tasks.length > 1) {
+    return all(tasks.map(function (t) {
+      return join(t);
+    }));
+  }
+  var task = tasks[0];
+  (0, _utils.check)(task, _utils.is.notUndef, 'join(task): argument task is undefined');
+  (0, _utils.check)(task, _utils.is.task, 'join(task): argument ' + task + ' is not a valid Task object ' + TEST_HINT);
+  return effect(JOIN, task);
+}
+
+function cancel() {
+  for (var _len6 = arguments.length, tasks = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+    tasks[_key6] = arguments[_key6];
+  }
+
+  if (tasks.length > 1) {
+    return all(tasks.map(function (t) {
+      return cancel(t);
+    }));
+  }
+  var task = tasks[0];
+  if (tasks.length === 1) {
+    (0, _utils.check)(task, _utils.is.notUndef, 'cancel(task): argument task is undefined');
+    (0, _utils.check)(task, _utils.is.task, 'cancel(task): argument ' + task + ' is not a valid Task object ' + TEST_HINT);
+  }
+  return effect(CANCEL, task || _utils.SELF_CANCELLATION);
+}
+
+function select(selector) {
+  for (var _len7 = arguments.length, args = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
+    args[_key7 - 1] = arguments[_key7];
+  }
+
+  if (arguments.length === 0) {
+    selector = _utils.ident;
+  } else {
+    (0, _utils.check)(selector, _utils.is.notUndef, 'select(selector,[...]): argument selector is undefined');
+    (0, _utils.check)(selector, _utils.is.func, 'select(selector,[...]): argument ' + selector + ' is not a function');
+  }
+  return effect(SELECT, { selector: selector, args: args });
+}
+
+/**
+  channel(pattern, [buffer])    => creates an event channel for store actions
+**/
+function actionChannel(pattern, buffer) {
+  (0, _utils.check)(pattern, _utils.is.notUndef, 'actionChannel(pattern,...): argument pattern is undefined');
+  if (arguments.length > 1) {
+    (0, _utils.check)(buffer, _utils.is.notUndef, 'actionChannel(pattern, buffer): argument buffer is undefined');
+    (0, _utils.check)(buffer, _utils.is.buffer, 'actionChannel(pattern, buffer): argument ' + buffer + ' is not a valid buffer');
+  }
+  return effect(ACTION_CHANNEL, { pattern: pattern, buffer: buffer });
+}
+
+function cancelled() {
+  return effect(CANCELLED, {});
+}
+
+function flush(channel) {
+  (0, _utils.check)(channel, _utils.is.channel, 'flush(channel): argument ' + channel + ' is not valid channel');
+  return effect(FLUSH, channel);
+}
+
+function getContext(prop) {
+  (0, _utils.check)(prop, _utils.is.string, 'getContext(prop): argument ' + prop + ' is not a string');
+  return effect(GET_CONTEXT, prop);
+}
+
+function setContext(props) {
+  (0, _utils.check)(props, _utils.is.object, (0, _utils.createSetContextWarning)(null, props));
+  return effect(SET_CONTEXT, props);
+}
+
+function takeEvery(patternOrChannel, worker) {
+  for (var _len8 = arguments.length, args = Array(_len8 > 2 ? _len8 - 2 : 0), _key8 = 2; _key8 < _len8; _key8++) {
+    args[_key8 - 2] = arguments[_key8];
+  }
+
+  return fork.apply(undefined, [_sagaHelpers.takeEveryHelper, patternOrChannel, worker].concat(args));
+}
+
+function takeLatest(patternOrChannel, worker) {
+  for (var _len9 = arguments.length, args = Array(_len9 > 2 ? _len9 - 2 : 0), _key9 = 2; _key9 < _len9; _key9++) {
+    args[_key9 - 2] = arguments[_key9];
+  }
+
+  return fork.apply(undefined, [_sagaHelpers.takeLatestHelper, patternOrChannel, worker].concat(args));
+}
+
+function throttle(ms, pattern, worker) {
+  for (var _len10 = arguments.length, args = Array(_len10 > 3 ? _len10 - 3 : 0), _key10 = 3; _key10 < _len10; _key10++) {
+    args[_key10 - 3] = arguments[_key10];
+  }
+
+  return fork.apply(undefined, [_sagaHelpers.throttleHelper, ms, pattern, worker].concat(args));
+}
+
+var createAsEffectType = function createAsEffectType(type) {
+  return function (effect) {
+    return effect && effect[IO] && effect[type];
+  };
+};
+
+var asEffect = exports.asEffect = {
+  take: /*#__PURE__*/createAsEffectType(TAKE),
+  put: /*#__PURE__*/createAsEffectType(PUT),
+  all: /*#__PURE__*/createAsEffectType(ALL),
+  race: /*#__PURE__*/createAsEffectType(RACE),
+  call: /*#__PURE__*/createAsEffectType(CALL),
+  cps: /*#__PURE__*/createAsEffectType(CPS),
+  fork: /*#__PURE__*/createAsEffectType(FORK),
+  join: /*#__PURE__*/createAsEffectType(JOIN),
+  cancel: /*#__PURE__*/createAsEffectType(CANCEL),
+  select: /*#__PURE__*/createAsEffectType(SELECT),
+  actionChannel: /*#__PURE__*/createAsEffectType(ACTION_CHANNEL),
+  cancelled: /*#__PURE__*/createAsEffectType(CANCELLED),
+  flush: /*#__PURE__*/createAsEffectType(FLUSH),
+  getContext: /*#__PURE__*/createAsEffectType(GET_CONTEXT),
+  setContext: /*#__PURE__*/createAsEffectType(SET_CONTEXT)
+};
 });
 ___scope___.file("lib/internal/utils.js", function(exports, require, module, __filename, __dirname){
 /* fuse:injection: */ var process = require("process");
@@ -52510,6 +52788,834 @@ var cloneableGenerator = exports.cloneableGenerator = function cloneableGenerato
     };
   };
 };
+});
+___scope___.file("lib/internal/sagaHelpers/index.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+exports.__esModule = true;
+exports.throttleHelper = exports.takeLatestHelper = exports.takeEveryHelper = exports.throttle = exports.takeLatest = exports.takeEvery = undefined;
+
+var _takeEvery = /*#__PURE__*/require('./takeEvery');
+
+var _takeEvery2 = /*#__PURE__*/_interopRequireDefault(_takeEvery);
+
+var _takeLatest = /*#__PURE__*/require('./takeLatest');
+
+var _takeLatest2 = /*#__PURE__*/_interopRequireDefault(_takeLatest);
+
+var _throttle = /*#__PURE__*/require('./throttle');
+
+var _throttle2 = /*#__PURE__*/_interopRequireDefault(_throttle);
+
+var _utils = /*#__PURE__*/require('../utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var deprecationWarning = function deprecationWarning(helperName) {
+  return 'import { ' + helperName + ' } from \'redux-saga\' has been deprecated in favor of import { ' + helperName + ' } from \'redux-saga/effects\'.\nThe latter will not work with yield*, as helper effects are wrapped automatically for you in fork effect.\nTherefore yield ' + helperName + ' will return task descriptor to your saga and execute next lines of code.';
+};
+
+var takeEvery = /*#__PURE__*/(0, _utils.deprecate)(_takeEvery2.default, /*#__PURE__*/deprecationWarning('takeEvery'));
+var takeLatest = /*#__PURE__*/(0, _utils.deprecate)(_takeLatest2.default, /*#__PURE__*/deprecationWarning('takeLatest'));
+var throttle = /*#__PURE__*/(0, _utils.deprecate)(_throttle2.default, /*#__PURE__*/deprecationWarning('throttle'));
+
+exports.takeEvery = takeEvery;
+exports.takeLatest = takeLatest;
+exports.throttle = throttle;
+exports.takeEveryHelper = _takeEvery2.default;
+exports.takeLatestHelper = _takeLatest2.default;
+exports.throttleHelper = _throttle2.default;
+});
+___scope___.file("lib/internal/sagaHelpers/takeEvery.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+exports.__esModule = true;
+exports.default = takeEvery;
+
+var _fsmIterator = /*#__PURE__*/require('./fsmIterator');
+
+var _fsmIterator2 = /*#__PURE__*/_interopRequireDefault(_fsmIterator);
+
+var _io = /*#__PURE__*/require('../io');
+
+var _channel = /*#__PURE__*/require('../channel');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function takeEvery(patternOrChannel, worker) {
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
+  }
+
+  var yTake = { done: false, value: (0, _io.take)(patternOrChannel) };
+  var yFork = function yFork(ac) {
+    return { done: false, value: _io.fork.apply(undefined, [worker].concat(args, [ac])) };
+  };
+
+  var action = void 0,
+      setAction = function setAction(ac) {
+    return action = ac;
+  };
+
+  return (0, _fsmIterator2.default)({
+    q1: function q1() {
+      return ['q2', yTake, setAction];
+    },
+    q2: function q2() {
+      return action === _channel.END ? [_fsmIterator.qEnd] : ['q1', yFork(action)];
+    }
+  }, 'q1', 'takeEvery(' + (0, _fsmIterator.safeName)(patternOrChannel) + ', ' + worker.name + ')');
+}
+});
+___scope___.file("lib/internal/sagaHelpers/fsmIterator.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+exports.__esModule = true;
+exports.qEnd = undefined;
+exports.safeName = safeName;
+exports.default = fsmIterator;
+
+var _utils = /*#__PURE__*/require('../utils');
+
+var done = { done: true, value: undefined };
+var qEnd = exports.qEnd = {};
+
+function safeName(patternOrChannel) {
+  if (_utils.is.channel(patternOrChannel)) {
+    return 'channel';
+  } else if (Array.isArray(patternOrChannel)) {
+    return String(patternOrChannel.map(function (entry) {
+      return String(entry);
+    }));
+  } else {
+    return String(patternOrChannel);
+  }
+}
+
+function fsmIterator(fsm, q0) {
+  var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'iterator';
+
+  var updateState = void 0,
+      qNext = q0;
+
+  function next(arg, error) {
+    if (qNext === qEnd) {
+      return done;
+    }
+
+    if (error) {
+      qNext = qEnd;
+      throw error;
+    } else {
+      updateState && updateState(arg);
+
+      var _fsm$qNext = fsm[qNext](),
+          q = _fsm$qNext[0],
+          output = _fsm$qNext[1],
+          _updateState = _fsm$qNext[2];
+
+      qNext = q;
+      updateState = _updateState;
+      return qNext === qEnd ? done : output;
+    }
+  }
+
+  return (0, _utils.makeIterator)(next, function (error) {
+    return next(null, error);
+  }, name, true);
+}
+});
+___scope___.file("lib/internal/channel.js", function(exports, require, module, __filename, __dirname){
+/* fuse:injection: */ var process = require("process");
+'use strict';
+
+exports.__esModule = true;
+exports.UNDEFINED_INPUT_ERROR = exports.INVALID_BUFFER = exports.isEnd = exports.END = undefined;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.emitter = emitter;
+exports.channel = channel;
+exports.eventChannel = eventChannel;
+exports.stdChannel = stdChannel;
+
+var _utils = /*#__PURE__*/require('./utils');
+
+var _buffers = /*#__PURE__*/require('./buffers');
+
+var _scheduler = /*#__PURE__*/require('./scheduler');
+
+var CHANNEL_END_TYPE = '@@redux-saga/CHANNEL_END';
+var END = exports.END = { type: CHANNEL_END_TYPE };
+var isEnd = exports.isEnd = function isEnd(a) {
+  return a && a.type === CHANNEL_END_TYPE;
+};
+
+function emitter() {
+  var subscribers = [];
+
+  function subscribe(sub) {
+    subscribers.push(sub);
+    return function () {
+      return (0, _utils.remove)(subscribers, sub);
+    };
+  }
+
+  function emit(item) {
+    var arr = subscribers.slice();
+    for (var i = 0, len = arr.length; i < len; i++) {
+      arr[i](item);
+    }
+  }
+
+  return {
+    subscribe: subscribe,
+    emit: emit
+  };
+}
+
+var INVALID_BUFFER = exports.INVALID_BUFFER = 'invalid buffer passed to channel factory function';
+var UNDEFINED_INPUT_ERROR = exports.UNDEFINED_INPUT_ERROR = 'Saga was provided with an undefined action';
+
+if (process.env.NODE_ENV !== 'production') {
+  exports.UNDEFINED_INPUT_ERROR = UNDEFINED_INPUT_ERROR += '\nHints:\n    - check that your Action Creator returns a non-undefined value\n    - if the Saga was started using runSaga, check that your subscribe source provides the action to its listeners\n  ';
+}
+
+function channel() {
+  var buffer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _buffers.buffers.fixed();
+
+  var closed = false;
+  var takers = [];
+
+  (0, _utils.check)(buffer, _utils.is.buffer, INVALID_BUFFER);
+
+  function checkForbiddenStates() {
+    if (closed && takers.length) {
+      throw (0, _utils.internalErr)('Cannot have a closed channel with pending takers');
+    }
+    if (takers.length && !buffer.isEmpty()) {
+      throw (0, _utils.internalErr)('Cannot have pending takers with non empty buffer');
+    }
+  }
+
+  function put(input) {
+    checkForbiddenStates();
+    (0, _utils.check)(input, _utils.is.notUndef, UNDEFINED_INPUT_ERROR);
+    if (closed) {
+      return;
+    }
+    if (!takers.length) {
+      return buffer.put(input);
+    }
+    for (var i = 0; i < takers.length; i++) {
+      var cb = takers[i];
+      if (!cb[_utils.MATCH] || cb[_utils.MATCH](input)) {
+        takers.splice(i, 1);
+        return cb(input);
+      }
+    }
+  }
+
+  function take(cb) {
+    checkForbiddenStates();
+    (0, _utils.check)(cb, _utils.is.func, "channel.take's callback must be a function");
+
+    if (closed && buffer.isEmpty()) {
+      cb(END);
+    } else if (!buffer.isEmpty()) {
+      cb(buffer.take());
+    } else {
+      takers.push(cb);
+      cb.cancel = function () {
+        return (0, _utils.remove)(takers, cb);
+      };
+    }
+  }
+
+  function flush(cb) {
+    checkForbiddenStates(); // TODO: check if some new state should be forbidden now
+    (0, _utils.check)(cb, _utils.is.func, "channel.flush' callback must be a function");
+    if (closed && buffer.isEmpty()) {
+      cb(END);
+      return;
+    }
+    cb(buffer.flush());
+  }
+
+  function close() {
+    checkForbiddenStates();
+    if (!closed) {
+      closed = true;
+      if (takers.length) {
+        var arr = takers;
+        takers = [];
+        for (var i = 0, len = arr.length; i < len; i++) {
+          arr[i](END);
+        }
+      }
+    }
+  }
+
+  return {
+    take: take,
+    put: put,
+    flush: flush,
+    close: close,
+    get __takers__() {
+      return takers;
+    },
+    get __closed__() {
+      return closed;
+    }
+  };
+}
+
+function eventChannel(subscribe) {
+  var buffer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _buffers.buffers.none();
+  var matcher = arguments[2];
+
+  /**
+    should be if(typeof matcher !== undefined) instead?
+    see PR #273 for a background discussion
+  **/
+  if (arguments.length > 2) {
+    (0, _utils.check)(matcher, _utils.is.func, 'Invalid match function passed to eventChannel');
+  }
+
+  var chan = channel(buffer);
+  var close = function close() {
+    if (!chan.__closed__) {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+      chan.close();
+    }
+  };
+  var unsubscribe = subscribe(function (input) {
+    if (isEnd(input)) {
+      close();
+      return;
+    }
+    if (matcher && !matcher(input)) {
+      return;
+    }
+    chan.put(input);
+  });
+  if (chan.__closed__) {
+    unsubscribe();
+  }
+
+  if (!_utils.is.func(unsubscribe)) {
+    throw new Error('in eventChannel: subscribe should return a function to unsubscribe');
+  }
+
+  return {
+    take: chan.take,
+    flush: chan.flush,
+    close: close
+  };
+}
+
+function stdChannel(subscribe) {
+  var chan = eventChannel(function (cb) {
+    return subscribe(function (input) {
+      if (input[_utils.SAGA_ACTION]) {
+        cb(input);
+        return;
+      }
+      (0, _scheduler.asap)(function () {
+        return cb(input);
+      });
+    });
+  });
+
+  return _extends({}, chan, {
+    take: function take(cb, matcher) {
+      if (arguments.length > 1) {
+        (0, _utils.check)(matcher, _utils.is.func, "channel.take's matcher argument must be a function");
+        cb[_utils.MATCH] = matcher;
+      }
+      chan.take(cb);
+    }
+  });
+}
+});
+___scope___.file("lib/internal/buffers.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+
+exports.__esModule = true;
+exports.buffers = exports.BUFFER_OVERFLOW = undefined;
+
+var _utils = /*#__PURE__*/require("./utils");
+
+var BUFFER_OVERFLOW = exports.BUFFER_OVERFLOW = "Channel's Buffer overflow!";
+
+var ON_OVERFLOW_THROW = 1;
+var ON_OVERFLOW_DROP = 2;
+var ON_OVERFLOW_SLIDE = 3;
+var ON_OVERFLOW_EXPAND = 4;
+
+var zeroBuffer = { isEmpty: _utils.kTrue, put: _utils.noop, take: _utils.noop };
+
+function ringBuffer() {
+  var limit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
+  var overflowAction = arguments[1];
+
+  var arr = new Array(limit);
+  var length = 0;
+  var pushIndex = 0;
+  var popIndex = 0;
+
+  var push = function push(it) {
+    arr[pushIndex] = it;
+    pushIndex = (pushIndex + 1) % limit;
+    length++;
+  };
+
+  var take = function take() {
+    if (length != 0) {
+      var it = arr[popIndex];
+      arr[popIndex] = null;
+      length--;
+      popIndex = (popIndex + 1) % limit;
+      return it;
+    }
+  };
+
+  var flush = function flush() {
+    var items = [];
+    while (length) {
+      items.push(take());
+    }
+    return items;
+  };
+
+  return {
+    isEmpty: function isEmpty() {
+      return length == 0;
+    },
+    put: function put(it) {
+      if (length < limit) {
+        push(it);
+      } else {
+        var doubledLimit = void 0;
+        switch (overflowAction) {
+          case ON_OVERFLOW_THROW:
+            throw new Error(BUFFER_OVERFLOW);
+          case ON_OVERFLOW_SLIDE:
+            arr[pushIndex] = it;
+            pushIndex = (pushIndex + 1) % limit;
+            popIndex = pushIndex;
+            break;
+          case ON_OVERFLOW_EXPAND:
+            doubledLimit = 2 * limit;
+
+            arr = flush();
+
+            length = arr.length;
+            pushIndex = arr.length;
+            popIndex = 0;
+
+            arr.length = doubledLimit;
+            limit = doubledLimit;
+
+            push(it);
+            break;
+          default:
+          // DROP
+        }
+      }
+    },
+    take: take,
+    flush: flush
+  };
+}
+
+var buffers = exports.buffers = {
+  none: function none() {
+    return zeroBuffer;
+  },
+  fixed: function fixed(limit) {
+    return ringBuffer(limit, ON_OVERFLOW_THROW);
+  },
+  dropping: function dropping(limit) {
+    return ringBuffer(limit, ON_OVERFLOW_DROP);
+  },
+  sliding: function sliding(limit) {
+    return ringBuffer(limit, ON_OVERFLOW_SLIDE);
+  },
+  expanding: function expanding(initialSize) {
+    return ringBuffer(initialSize, ON_OVERFLOW_EXPAND);
+  }
+};
+});
+___scope___.file("lib/internal/scheduler.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+
+exports.__esModule = true;
+exports.asap = asap;
+exports.suspend = suspend;
+exports.flush = flush;
+var queue = [];
+/**
+  Variable to hold a counting semaphore
+  - Incrementing adds a lock and puts the scheduler in a `suspended` state (if it's not
+    already suspended)
+  - Decrementing releases a lock. Zero locks puts the scheduler in a `released` state. This
+    triggers flushing the queued tasks.
+**/
+var semaphore = 0;
+
+/**
+  Executes a task 'atomically'. Tasks scheduled during this execution will be queued
+  and flushed after this task has finished (assuming the scheduler endup in a released
+  state).
+**/
+function exec(task) {
+  try {
+    suspend();
+    task();
+  } finally {
+    release();
+  }
+}
+
+/**
+  Executes or queues a task depending on the state of the scheduler (`suspended` or `released`)
+**/
+function asap(task) {
+  queue.push(task);
+
+  if (!semaphore) {
+    suspend();
+    flush();
+  }
+}
+
+/**
+  Puts the scheduler in a `suspended` state. Scheduled tasks will be queued until the
+  scheduler is released.
+**/
+function suspend() {
+  semaphore++;
+}
+
+/**
+  Puts the scheduler in a `released` state.
+**/
+function release() {
+  semaphore--;
+}
+
+/**
+  Releases the current lock. Executes all queued tasks if the scheduler is in the released state.
+**/
+function flush() {
+  release();
+
+  var task = void 0;
+  while (!semaphore && (task = queue.shift()) !== undefined) {
+    exec(task);
+  }
+}
+});
+___scope___.file("lib/internal/sagaHelpers/takeLatest.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+exports.__esModule = true;
+exports.default = takeLatest;
+
+var _fsmIterator = /*#__PURE__*/require('./fsmIterator');
+
+var _fsmIterator2 = /*#__PURE__*/_interopRequireDefault(_fsmIterator);
+
+var _io = /*#__PURE__*/require('../io');
+
+var _channel = /*#__PURE__*/require('../channel');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function takeLatest(patternOrChannel, worker) {
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
+  }
+
+  var yTake = { done: false, value: (0, _io.take)(patternOrChannel) };
+  var yFork = function yFork(ac) {
+    return { done: false, value: _io.fork.apply(undefined, [worker].concat(args, [ac])) };
+  };
+  var yCancel = function yCancel(task) {
+    return { done: false, value: (0, _io.cancel)(task) };
+  };
+
+  var task = void 0,
+      action = void 0;
+  var setTask = function setTask(t) {
+    return task = t;
+  };
+  var setAction = function setAction(ac) {
+    return action = ac;
+  };
+
+  return (0, _fsmIterator2.default)({
+    q1: function q1() {
+      return ['q2', yTake, setAction];
+    },
+    q2: function q2() {
+      return action === _channel.END ? [_fsmIterator.qEnd] : task ? ['q3', yCancel(task)] : ['q1', yFork(action), setTask];
+    },
+    q3: function q3() {
+      return ['q1', yFork(action), setTask];
+    }
+  }, 'q1', 'takeLatest(' + (0, _fsmIterator.safeName)(patternOrChannel) + ', ' + worker.name + ')');
+}
+});
+___scope___.file("lib/internal/sagaHelpers/throttle.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+exports.__esModule = true;
+exports.default = throttle;
+
+var _fsmIterator = /*#__PURE__*/require('./fsmIterator');
+
+var _fsmIterator2 = /*#__PURE__*/_interopRequireDefault(_fsmIterator);
+
+var _io = /*#__PURE__*/require('../io');
+
+var _channel = /*#__PURE__*/require('../channel');
+
+var _buffers = /*#__PURE__*/require('../buffers');
+
+var _utils = /*#__PURE__*/require('../utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function throttle(delayLength, pattern, worker) {
+  for (var _len = arguments.length, args = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+    args[_key - 3] = arguments[_key];
+  }
+
+  var action = void 0,
+      channel = void 0;
+
+  var yActionChannel = { done: false, value: (0, _io.actionChannel)(pattern, _buffers.buffers.sliding(1)) };
+  var yTake = function yTake() {
+    return { done: false, value: (0, _io.take)(channel) };
+  };
+  var yFork = function yFork(ac) {
+    return { done: false, value: _io.fork.apply(undefined, [worker].concat(args, [ac])) };
+  };
+  var yDelay = { done: false, value: (0, _io.call)(_utils.delay, delayLength) };
+
+  var setAction = function setAction(ac) {
+    return action = ac;
+  };
+  var setChannel = function setChannel(ch) {
+    return channel = ch;
+  };
+
+  return (0, _fsmIterator2.default)({
+    q1: function q1() {
+      return ['q2', yActionChannel, setChannel];
+    },
+    q2: function q2() {
+      return ['q3', yTake(), setAction];
+    },
+    q3: function q3() {
+      return action === _channel.END ? [_fsmIterator.qEnd] : ['q4', yFork(action)];
+    },
+    q4: function q4() {
+      return ['q2', yDelay];
+    }
+  }, 'q1', 'throttle(' + (0, _fsmIterator.safeName)(pattern) + ', ' + worker.name + ')');
+}
+});
+___scope___.file("lib/index.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+exports.__esModule = true;
+exports.utils = exports.effects = exports.detach = exports.CANCEL = exports.delay = exports.throttle = exports.takeLatest = exports.takeEvery = exports.buffers = exports.channel = exports.eventChannel = exports.END = exports.runSaga = undefined;
+
+var _runSaga = /*#__PURE__*/require('./internal/runSaga');
+
+Object.defineProperty(exports, 'runSaga', {
+  enumerable: true,
+  get: function get() {
+    return _runSaga.runSaga;
+  }
+});
+
+var _channel = /*#__PURE__*/require('./internal/channel');
+
+Object.defineProperty(exports, 'END', {
+  enumerable: true,
+  get: function get() {
+    return _channel.END;
+  }
+});
+Object.defineProperty(exports, 'eventChannel', {
+  enumerable: true,
+  get: function get() {
+    return _channel.eventChannel;
+  }
+});
+Object.defineProperty(exports, 'channel', {
+  enumerable: true,
+  get: function get() {
+    return _channel.channel;
+  }
+});
+
+var _buffers = /*#__PURE__*/require('./internal/buffers');
+
+Object.defineProperty(exports, 'buffers', {
+  enumerable: true,
+  get: function get() {
+    return _buffers.buffers;
+  }
+});
+
+var _sagaHelpers = /*#__PURE__*/require('./internal/sagaHelpers');
+
+Object.defineProperty(exports, 'takeEvery', {
+  enumerable: true,
+  get: function get() {
+    return _sagaHelpers.takeEvery;
+  }
+});
+Object.defineProperty(exports, 'takeLatest', {
+  enumerable: true,
+  get: function get() {
+    return _sagaHelpers.takeLatest;
+  }
+});
+Object.defineProperty(exports, 'throttle', {
+  enumerable: true,
+  get: function get() {
+    return _sagaHelpers.throttle;
+  }
+});
+
+var _utils = /*#__PURE__*/require('./internal/utils');
+
+Object.defineProperty(exports, 'delay', {
+  enumerable: true,
+  get: function get() {
+    return _utils.delay;
+  }
+});
+Object.defineProperty(exports, 'CANCEL', {
+  enumerable: true,
+  get: function get() {
+    return _utils.CANCEL;
+  }
+});
+
+var _io = /*#__PURE__*/require('./internal/io');
+
+Object.defineProperty(exports, 'detach', {
+  enumerable: true,
+  get: function get() {
+    return _io.detach;
+  }
+});
+
+var _middleware = /*#__PURE__*/require('./internal/middleware');
+
+var _middleware2 = /*#__PURE__*/_interopRequireDefault(_middleware);
+
+var _effects = /*#__PURE__*/require('./effects');
+
+var effects = /*#__PURE__*/_interopRequireWildcard(_effects);
+
+var _utils2 = /*#__PURE__*/require('./utils');
+
+var utils = /*#__PURE__*/_interopRequireWildcard(_utils2);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _middleware2.default;
+exports.effects = effects;
+exports.utils = utils;
+});
+___scope___.file("lib/internal/runSaga.js", function(exports, require, module, __filename, __dirname){
+/* fuse:injection: */ var process = require("process");
+'use strict';
+
+exports.__esModule = true;
+exports.runSaga = runSaga;
+
+var _utils = /*#__PURE__*/require('./utils');
+
+var _proc = /*#__PURE__*/require('./proc');
+
+var _proc2 = /*#__PURE__*/_interopRequireDefault(_proc);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var RUN_SAGA_SIGNATURE = 'runSaga(storeInterface, saga, ...args)';
+var NON_GENERATOR_ERR = RUN_SAGA_SIGNATURE + ': saga argument must be a Generator function!';
+
+function runSaga(storeInterface, saga) {
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
+  }
+
+  var iterator = void 0;
+
+  if (_utils.is.iterator(storeInterface)) {
+    if (process.env.NODE_ENV === 'development') {
+      (0, _utils.log)('warn', 'runSaga(iterator, storeInterface) has been deprecated in favor of ' + RUN_SAGA_SIGNATURE);
+    }
+    iterator = storeInterface;
+    storeInterface = saga;
+  } else {
+    (0, _utils.check)(saga, _utils.is.func, NON_GENERATOR_ERR);
+    iterator = saga.apply(undefined, args);
+    (0, _utils.check)(iterator, _utils.is.iterator, NON_GENERATOR_ERR);
+  }
+
+  var _storeInterface = storeInterface,
+      subscribe = _storeInterface.subscribe,
+      dispatch = _storeInterface.dispatch,
+      getState = _storeInterface.getState,
+      context = _storeInterface.context,
+      sagaMonitor = _storeInterface.sagaMonitor,
+      logger = _storeInterface.logger,
+      onError = _storeInterface.onError;
+
+
+  var effectId = (0, _utils.uid)();
+
+  if (sagaMonitor) {
+    // monitors are expected to have a certain interface, let's fill-in any missing ones
+    sagaMonitor.effectTriggered = sagaMonitor.effectTriggered || _utils.noop;
+    sagaMonitor.effectResolved = sagaMonitor.effectResolved || _utils.noop;
+    sagaMonitor.effectRejected = sagaMonitor.effectRejected || _utils.noop;
+    sagaMonitor.effectCancelled = sagaMonitor.effectCancelled || _utils.noop;
+    sagaMonitor.actionDispatched = sagaMonitor.actionDispatched || _utils.noop;
+
+    sagaMonitor.effectTriggered({ effectId: effectId, root: true, parentEffectId: 0, effect: { root: true, saga: saga, args: args } });
+  }
+
+  var task = (0, _proc2.default)(iterator, subscribe, (0, _utils.wrapSagaDispatch)(dispatch), getState, context, { sagaMonitor: sagaMonitor, logger: logger, onError: onError }, effectId, saga.name);
+
+  if (sagaMonitor) {
+    sagaMonitor.effectResolved(effectId, task);
+  }
+
+  return task;
+}
 });
 ___scope___.file("lib/internal/proc.js", function(exports, require, module, __filename, __dirname){
 
@@ -53286,954 +54392,6 @@ function proc(iterator) {
   }
 }
 });
-___scope___.file("lib/internal/scheduler.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-
-exports.__esModule = true;
-exports.asap = asap;
-exports.suspend = suspend;
-exports.flush = flush;
-var queue = [];
-/**
-  Variable to hold a counting semaphore
-  - Incrementing adds a lock and puts the scheduler in a `suspended` state (if it's not
-    already suspended)
-  - Decrementing releases a lock. Zero locks puts the scheduler in a `released` state. This
-    triggers flushing the queued tasks.
-**/
-var semaphore = 0;
-
-/**
-  Executes a task 'atomically'. Tasks scheduled during this execution will be queued
-  and flushed after this task has finished (assuming the scheduler endup in a released
-  state).
-**/
-function exec(task) {
-  try {
-    suspend();
-    task();
-  } finally {
-    release();
-  }
-}
-
-/**
-  Executes or queues a task depending on the state of the scheduler (`suspended` or `released`)
-**/
-function asap(task) {
-  queue.push(task);
-
-  if (!semaphore) {
-    suspend();
-    flush();
-  }
-}
-
-/**
-  Puts the scheduler in a `suspended` state. Scheduled tasks will be queued until the
-  scheduler is released.
-**/
-function suspend() {
-  semaphore++;
-}
-
-/**
-  Puts the scheduler in a `released` state.
-**/
-function release() {
-  semaphore--;
-}
-
-/**
-  Releases the current lock. Executes all queued tasks if the scheduler is in the released state.
-**/
-function flush() {
-  release();
-
-  var task = void 0;
-  while (!semaphore && (task = queue.shift()) !== undefined) {
-    exec(task);
-  }
-}
-});
-___scope___.file("lib/internal/io.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-exports.__esModule = true;
-exports.asEffect = exports.takem = exports.detach = undefined;
-exports.take = take;
-exports.put = put;
-exports.all = all;
-exports.race = race;
-exports.call = call;
-exports.apply = apply;
-exports.cps = cps;
-exports.fork = fork;
-exports.spawn = spawn;
-exports.join = join;
-exports.cancel = cancel;
-exports.select = select;
-exports.actionChannel = actionChannel;
-exports.cancelled = cancelled;
-exports.flush = flush;
-exports.getContext = getContext;
-exports.setContext = setContext;
-exports.takeEvery = takeEvery;
-exports.takeLatest = takeLatest;
-exports.throttle = throttle;
-
-var _utils = /*#__PURE__*/require('./utils');
-
-var _sagaHelpers = /*#__PURE__*/require('./sagaHelpers');
-
-var IO = /*#__PURE__*/(0, _utils.sym)('IO');
-var TAKE = 'TAKE';
-var PUT = 'PUT';
-var ALL = 'ALL';
-var RACE = 'RACE';
-var CALL = 'CALL';
-var CPS = 'CPS';
-var FORK = 'FORK';
-var JOIN = 'JOIN';
-var CANCEL = 'CANCEL';
-var SELECT = 'SELECT';
-var ACTION_CHANNEL = 'ACTION_CHANNEL';
-var CANCELLED = 'CANCELLED';
-var FLUSH = 'FLUSH';
-var GET_CONTEXT = 'GET_CONTEXT';
-var SET_CONTEXT = 'SET_CONTEXT';
-
-var TEST_HINT = '\n(HINT: if you are getting this errors in tests, consider using createMockTask from redux-saga/utils)';
-
-var effect = function effect(type, payload) {
-  var _ref;
-
-  return _ref = {}, _ref[IO] = true, _ref[type] = payload, _ref;
-};
-
-var detach = exports.detach = function detach(eff) {
-  (0, _utils.check)(asEffect.fork(eff), _utils.is.object, 'detach(eff): argument must be a fork effect');
-  eff[FORK].detached = true;
-  return eff;
-};
-
-function take() {
-  var patternOrChannel = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '*';
-
-  if (arguments.length) {
-    (0, _utils.check)(arguments[0], _utils.is.notUndef, 'take(patternOrChannel): patternOrChannel is undefined');
-  }
-  if (_utils.is.pattern(patternOrChannel)) {
-    return effect(TAKE, { pattern: patternOrChannel });
-  }
-  if (_utils.is.channel(patternOrChannel)) {
-    return effect(TAKE, { channel: patternOrChannel });
-  }
-  throw new Error('take(patternOrChannel): argument ' + String(patternOrChannel) + ' is not valid channel or a valid pattern');
-}
-
-take.maybe = function () {
-  var eff = take.apply(undefined, arguments);
-  eff[TAKE].maybe = true;
-  return eff;
-};
-
-var takem = /*#__PURE__*/exports.takem = (0, _utils.deprecate)(take.maybe, /*#__PURE__*/(0, _utils.updateIncentive)('takem', 'take.maybe'));
-
-function put(channel, action) {
-  if (arguments.length > 1) {
-    (0, _utils.check)(channel, _utils.is.notUndef, 'put(channel, action): argument channel is undefined');
-    (0, _utils.check)(channel, _utils.is.channel, 'put(channel, action): argument ' + channel + ' is not a valid channel');
-    (0, _utils.check)(action, _utils.is.notUndef, 'put(channel, action): argument action is undefined');
-  } else {
-    (0, _utils.check)(channel, _utils.is.notUndef, 'put(action): argument action is undefined');
-    action = channel;
-    channel = null;
-  }
-  return effect(PUT, { channel: channel, action: action });
-}
-
-put.resolve = function () {
-  var eff = put.apply(undefined, arguments);
-  eff[PUT].resolve = true;
-  return eff;
-};
-
-put.sync = /*#__PURE__*/(0, _utils.deprecate)(put.resolve, /*#__PURE__*/(0, _utils.updateIncentive)('put.sync', 'put.resolve'));
-
-function all(effects) {
-  return effect(ALL, effects);
-}
-
-function race(effects) {
-  return effect(RACE, effects);
-}
-
-function getFnCallDesc(meth, fn, args) {
-  (0, _utils.check)(fn, _utils.is.notUndef, meth + ': argument fn is undefined');
-
-  var context = null;
-  if (_utils.is.array(fn)) {
-    var _fn = fn;
-    context = _fn[0];
-    fn = _fn[1];
-  } else if (fn.fn) {
-    var _fn2 = fn;
-    context = _fn2.context;
-    fn = _fn2.fn;
-  }
-  if (context && _utils.is.string(fn) && _utils.is.func(context[fn])) {
-    fn = context[fn];
-  }
-  (0, _utils.check)(fn, _utils.is.func, meth + ': argument ' + fn + ' is not a function');
-
-  return { context: context, fn: fn, args: args };
-}
-
-function call(fn) {
-  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    args[_key - 1] = arguments[_key];
-  }
-
-  return effect(CALL, getFnCallDesc('call', fn, args));
-}
-
-function apply(context, fn) {
-  var args = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
-  return effect(CALL, getFnCallDesc('apply', { context: context, fn: fn }, args));
-}
-
-function cps(fn) {
-  for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-    args[_key2 - 1] = arguments[_key2];
-  }
-
-  return effect(CPS, getFnCallDesc('cps', fn, args));
-}
-
-function fork(fn) {
-  for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-    args[_key3 - 1] = arguments[_key3];
-  }
-
-  return effect(FORK, getFnCallDesc('fork', fn, args));
-}
-
-function spawn(fn) {
-  for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-    args[_key4 - 1] = arguments[_key4];
-  }
-
-  return detach(fork.apply(undefined, [fn].concat(args)));
-}
-
-function join() {
-  for (var _len5 = arguments.length, tasks = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-    tasks[_key5] = arguments[_key5];
-  }
-
-  if (tasks.length > 1) {
-    return all(tasks.map(function (t) {
-      return join(t);
-    }));
-  }
-  var task = tasks[0];
-  (0, _utils.check)(task, _utils.is.notUndef, 'join(task): argument task is undefined');
-  (0, _utils.check)(task, _utils.is.task, 'join(task): argument ' + task + ' is not a valid Task object ' + TEST_HINT);
-  return effect(JOIN, task);
-}
-
-function cancel() {
-  for (var _len6 = arguments.length, tasks = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-    tasks[_key6] = arguments[_key6];
-  }
-
-  if (tasks.length > 1) {
-    return all(tasks.map(function (t) {
-      return cancel(t);
-    }));
-  }
-  var task = tasks[0];
-  if (tasks.length === 1) {
-    (0, _utils.check)(task, _utils.is.notUndef, 'cancel(task): argument task is undefined');
-    (0, _utils.check)(task, _utils.is.task, 'cancel(task): argument ' + task + ' is not a valid Task object ' + TEST_HINT);
-  }
-  return effect(CANCEL, task || _utils.SELF_CANCELLATION);
-}
-
-function select(selector) {
-  for (var _len7 = arguments.length, args = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
-    args[_key7 - 1] = arguments[_key7];
-  }
-
-  if (arguments.length === 0) {
-    selector = _utils.ident;
-  } else {
-    (0, _utils.check)(selector, _utils.is.notUndef, 'select(selector,[...]): argument selector is undefined');
-    (0, _utils.check)(selector, _utils.is.func, 'select(selector,[...]): argument ' + selector + ' is not a function');
-  }
-  return effect(SELECT, { selector: selector, args: args });
-}
-
-/**
-  channel(pattern, [buffer])    => creates an event channel for store actions
-**/
-function actionChannel(pattern, buffer) {
-  (0, _utils.check)(pattern, _utils.is.notUndef, 'actionChannel(pattern,...): argument pattern is undefined');
-  if (arguments.length > 1) {
-    (0, _utils.check)(buffer, _utils.is.notUndef, 'actionChannel(pattern, buffer): argument buffer is undefined');
-    (0, _utils.check)(buffer, _utils.is.buffer, 'actionChannel(pattern, buffer): argument ' + buffer + ' is not a valid buffer');
-  }
-  return effect(ACTION_CHANNEL, { pattern: pattern, buffer: buffer });
-}
-
-function cancelled() {
-  return effect(CANCELLED, {});
-}
-
-function flush(channel) {
-  (0, _utils.check)(channel, _utils.is.channel, 'flush(channel): argument ' + channel + ' is not valid channel');
-  return effect(FLUSH, channel);
-}
-
-function getContext(prop) {
-  (0, _utils.check)(prop, _utils.is.string, 'getContext(prop): argument ' + prop + ' is not a string');
-  return effect(GET_CONTEXT, prop);
-}
-
-function setContext(props) {
-  (0, _utils.check)(props, _utils.is.object, (0, _utils.createSetContextWarning)(null, props));
-  return effect(SET_CONTEXT, props);
-}
-
-function takeEvery(patternOrChannel, worker) {
-  for (var _len8 = arguments.length, args = Array(_len8 > 2 ? _len8 - 2 : 0), _key8 = 2; _key8 < _len8; _key8++) {
-    args[_key8 - 2] = arguments[_key8];
-  }
-
-  return fork.apply(undefined, [_sagaHelpers.takeEveryHelper, patternOrChannel, worker].concat(args));
-}
-
-function takeLatest(patternOrChannel, worker) {
-  for (var _len9 = arguments.length, args = Array(_len9 > 2 ? _len9 - 2 : 0), _key9 = 2; _key9 < _len9; _key9++) {
-    args[_key9 - 2] = arguments[_key9];
-  }
-
-  return fork.apply(undefined, [_sagaHelpers.takeLatestHelper, patternOrChannel, worker].concat(args));
-}
-
-function throttle(ms, pattern, worker) {
-  for (var _len10 = arguments.length, args = Array(_len10 > 3 ? _len10 - 3 : 0), _key10 = 3; _key10 < _len10; _key10++) {
-    args[_key10 - 3] = arguments[_key10];
-  }
-
-  return fork.apply(undefined, [_sagaHelpers.throttleHelper, ms, pattern, worker].concat(args));
-}
-
-var createAsEffectType = function createAsEffectType(type) {
-  return function (effect) {
-    return effect && effect[IO] && effect[type];
-  };
-};
-
-var asEffect = exports.asEffect = {
-  take: /*#__PURE__*/createAsEffectType(TAKE),
-  put: /*#__PURE__*/createAsEffectType(PUT),
-  all: /*#__PURE__*/createAsEffectType(ALL),
-  race: /*#__PURE__*/createAsEffectType(RACE),
-  call: /*#__PURE__*/createAsEffectType(CALL),
-  cps: /*#__PURE__*/createAsEffectType(CPS),
-  fork: /*#__PURE__*/createAsEffectType(FORK),
-  join: /*#__PURE__*/createAsEffectType(JOIN),
-  cancel: /*#__PURE__*/createAsEffectType(CANCEL),
-  select: /*#__PURE__*/createAsEffectType(SELECT),
-  actionChannel: /*#__PURE__*/createAsEffectType(ACTION_CHANNEL),
-  cancelled: /*#__PURE__*/createAsEffectType(CANCELLED),
-  flush: /*#__PURE__*/createAsEffectType(FLUSH),
-  getContext: /*#__PURE__*/createAsEffectType(GET_CONTEXT),
-  setContext: /*#__PURE__*/createAsEffectType(SET_CONTEXT)
-};
-});
-___scope___.file("lib/internal/sagaHelpers/index.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-exports.__esModule = true;
-exports.throttleHelper = exports.takeLatestHelper = exports.takeEveryHelper = exports.throttle = exports.takeLatest = exports.takeEvery = undefined;
-
-var _takeEvery = /*#__PURE__*/require('./takeEvery');
-
-var _takeEvery2 = /*#__PURE__*/_interopRequireDefault(_takeEvery);
-
-var _takeLatest = /*#__PURE__*/require('./takeLatest');
-
-var _takeLatest2 = /*#__PURE__*/_interopRequireDefault(_takeLatest);
-
-var _throttle = /*#__PURE__*/require('./throttle');
-
-var _throttle2 = /*#__PURE__*/_interopRequireDefault(_throttle);
-
-var _utils = /*#__PURE__*/require('../utils');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var deprecationWarning = function deprecationWarning(helperName) {
-  return 'import { ' + helperName + ' } from \'redux-saga\' has been deprecated in favor of import { ' + helperName + ' } from \'redux-saga/effects\'.\nThe latter will not work with yield*, as helper effects are wrapped automatically for you in fork effect.\nTherefore yield ' + helperName + ' will return task descriptor to your saga and execute next lines of code.';
-};
-
-var takeEvery = /*#__PURE__*/(0, _utils.deprecate)(_takeEvery2.default, /*#__PURE__*/deprecationWarning('takeEvery'));
-var takeLatest = /*#__PURE__*/(0, _utils.deprecate)(_takeLatest2.default, /*#__PURE__*/deprecationWarning('takeLatest'));
-var throttle = /*#__PURE__*/(0, _utils.deprecate)(_throttle2.default, /*#__PURE__*/deprecationWarning('throttle'));
-
-exports.takeEvery = takeEvery;
-exports.takeLatest = takeLatest;
-exports.throttle = throttle;
-exports.takeEveryHelper = _takeEvery2.default;
-exports.takeLatestHelper = _takeLatest2.default;
-exports.throttleHelper = _throttle2.default;
-});
-___scope___.file("lib/internal/sagaHelpers/takeEvery.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-exports.__esModule = true;
-exports.default = takeEvery;
-
-var _fsmIterator = /*#__PURE__*/require('./fsmIterator');
-
-var _fsmIterator2 = /*#__PURE__*/_interopRequireDefault(_fsmIterator);
-
-var _io = /*#__PURE__*/require('../io');
-
-var _channel = /*#__PURE__*/require('../channel');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function takeEvery(patternOrChannel, worker) {
-  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-    args[_key - 2] = arguments[_key];
-  }
-
-  var yTake = { done: false, value: (0, _io.take)(patternOrChannel) };
-  var yFork = function yFork(ac) {
-    return { done: false, value: _io.fork.apply(undefined, [worker].concat(args, [ac])) };
-  };
-
-  var action = void 0,
-      setAction = function setAction(ac) {
-    return action = ac;
-  };
-
-  return (0, _fsmIterator2.default)({
-    q1: function q1() {
-      return ['q2', yTake, setAction];
-    },
-    q2: function q2() {
-      return action === _channel.END ? [_fsmIterator.qEnd] : ['q1', yFork(action)];
-    }
-  }, 'q1', 'takeEvery(' + (0, _fsmIterator.safeName)(patternOrChannel) + ', ' + worker.name + ')');
-}
-});
-___scope___.file("lib/internal/sagaHelpers/fsmIterator.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-exports.__esModule = true;
-exports.qEnd = undefined;
-exports.safeName = safeName;
-exports.default = fsmIterator;
-
-var _utils = /*#__PURE__*/require('../utils');
-
-var done = { done: true, value: undefined };
-var qEnd = exports.qEnd = {};
-
-function safeName(patternOrChannel) {
-  if (_utils.is.channel(patternOrChannel)) {
-    return 'channel';
-  } else if (Array.isArray(patternOrChannel)) {
-    return String(patternOrChannel.map(function (entry) {
-      return String(entry);
-    }));
-  } else {
-    return String(patternOrChannel);
-  }
-}
-
-function fsmIterator(fsm, q0) {
-  var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'iterator';
-
-  var updateState = void 0,
-      qNext = q0;
-
-  function next(arg, error) {
-    if (qNext === qEnd) {
-      return done;
-    }
-
-    if (error) {
-      qNext = qEnd;
-      throw error;
-    } else {
-      updateState && updateState(arg);
-
-      var _fsm$qNext = fsm[qNext](),
-          q = _fsm$qNext[0],
-          output = _fsm$qNext[1],
-          _updateState = _fsm$qNext[2];
-
-      qNext = q;
-      updateState = _updateState;
-      return qNext === qEnd ? done : output;
-    }
-  }
-
-  return (0, _utils.makeIterator)(next, function (error) {
-    return next(null, error);
-  }, name, true);
-}
-});
-___scope___.file("lib/internal/channel.js", function(exports, require, module, __filename, __dirname){
-/* fuse:injection: */ var process = require("process");
-'use strict';
-
-exports.__esModule = true;
-exports.UNDEFINED_INPUT_ERROR = exports.INVALID_BUFFER = exports.isEnd = exports.END = undefined;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-exports.emitter = emitter;
-exports.channel = channel;
-exports.eventChannel = eventChannel;
-exports.stdChannel = stdChannel;
-
-var _utils = /*#__PURE__*/require('./utils');
-
-var _buffers = /*#__PURE__*/require('./buffers');
-
-var _scheduler = /*#__PURE__*/require('./scheduler');
-
-var CHANNEL_END_TYPE = '@@redux-saga/CHANNEL_END';
-var END = exports.END = { type: CHANNEL_END_TYPE };
-var isEnd = exports.isEnd = function isEnd(a) {
-  return a && a.type === CHANNEL_END_TYPE;
-};
-
-function emitter() {
-  var subscribers = [];
-
-  function subscribe(sub) {
-    subscribers.push(sub);
-    return function () {
-      return (0, _utils.remove)(subscribers, sub);
-    };
-  }
-
-  function emit(item) {
-    var arr = subscribers.slice();
-    for (var i = 0, len = arr.length; i < len; i++) {
-      arr[i](item);
-    }
-  }
-
-  return {
-    subscribe: subscribe,
-    emit: emit
-  };
-}
-
-var INVALID_BUFFER = exports.INVALID_BUFFER = 'invalid buffer passed to channel factory function';
-var UNDEFINED_INPUT_ERROR = exports.UNDEFINED_INPUT_ERROR = 'Saga was provided with an undefined action';
-
-if (process.env.NODE_ENV !== 'production') {
-  exports.UNDEFINED_INPUT_ERROR = UNDEFINED_INPUT_ERROR += '\nHints:\n    - check that your Action Creator returns a non-undefined value\n    - if the Saga was started using runSaga, check that your subscribe source provides the action to its listeners\n  ';
-}
-
-function channel() {
-  var buffer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _buffers.buffers.fixed();
-
-  var closed = false;
-  var takers = [];
-
-  (0, _utils.check)(buffer, _utils.is.buffer, INVALID_BUFFER);
-
-  function checkForbiddenStates() {
-    if (closed && takers.length) {
-      throw (0, _utils.internalErr)('Cannot have a closed channel with pending takers');
-    }
-    if (takers.length && !buffer.isEmpty()) {
-      throw (0, _utils.internalErr)('Cannot have pending takers with non empty buffer');
-    }
-  }
-
-  function put(input) {
-    checkForbiddenStates();
-    (0, _utils.check)(input, _utils.is.notUndef, UNDEFINED_INPUT_ERROR);
-    if (closed) {
-      return;
-    }
-    if (!takers.length) {
-      return buffer.put(input);
-    }
-    for (var i = 0; i < takers.length; i++) {
-      var cb = takers[i];
-      if (!cb[_utils.MATCH] || cb[_utils.MATCH](input)) {
-        takers.splice(i, 1);
-        return cb(input);
-      }
-    }
-  }
-
-  function take(cb) {
-    checkForbiddenStates();
-    (0, _utils.check)(cb, _utils.is.func, "channel.take's callback must be a function");
-
-    if (closed && buffer.isEmpty()) {
-      cb(END);
-    } else if (!buffer.isEmpty()) {
-      cb(buffer.take());
-    } else {
-      takers.push(cb);
-      cb.cancel = function () {
-        return (0, _utils.remove)(takers, cb);
-      };
-    }
-  }
-
-  function flush(cb) {
-    checkForbiddenStates(); // TODO: check if some new state should be forbidden now
-    (0, _utils.check)(cb, _utils.is.func, "channel.flush' callback must be a function");
-    if (closed && buffer.isEmpty()) {
-      cb(END);
-      return;
-    }
-    cb(buffer.flush());
-  }
-
-  function close() {
-    checkForbiddenStates();
-    if (!closed) {
-      closed = true;
-      if (takers.length) {
-        var arr = takers;
-        takers = [];
-        for (var i = 0, len = arr.length; i < len; i++) {
-          arr[i](END);
-        }
-      }
-    }
-  }
-
-  return {
-    take: take,
-    put: put,
-    flush: flush,
-    close: close,
-    get __takers__() {
-      return takers;
-    },
-    get __closed__() {
-      return closed;
-    }
-  };
-}
-
-function eventChannel(subscribe) {
-  var buffer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _buffers.buffers.none();
-  var matcher = arguments[2];
-
-  /**
-    should be if(typeof matcher !== undefined) instead?
-    see PR #273 for a background discussion
-  **/
-  if (arguments.length > 2) {
-    (0, _utils.check)(matcher, _utils.is.func, 'Invalid match function passed to eventChannel');
-  }
-
-  var chan = channel(buffer);
-  var close = function close() {
-    if (!chan.__closed__) {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-      chan.close();
-    }
-  };
-  var unsubscribe = subscribe(function (input) {
-    if (isEnd(input)) {
-      close();
-      return;
-    }
-    if (matcher && !matcher(input)) {
-      return;
-    }
-    chan.put(input);
-  });
-  if (chan.__closed__) {
-    unsubscribe();
-  }
-
-  if (!_utils.is.func(unsubscribe)) {
-    throw new Error('in eventChannel: subscribe should return a function to unsubscribe');
-  }
-
-  return {
-    take: chan.take,
-    flush: chan.flush,
-    close: close
-  };
-}
-
-function stdChannel(subscribe) {
-  var chan = eventChannel(function (cb) {
-    return subscribe(function (input) {
-      if (input[_utils.SAGA_ACTION]) {
-        cb(input);
-        return;
-      }
-      (0, _scheduler.asap)(function () {
-        return cb(input);
-      });
-    });
-  });
-
-  return _extends({}, chan, {
-    take: function take(cb, matcher) {
-      if (arguments.length > 1) {
-        (0, _utils.check)(matcher, _utils.is.func, "channel.take's matcher argument must be a function");
-        cb[_utils.MATCH] = matcher;
-      }
-      chan.take(cb);
-    }
-  });
-}
-});
-___scope___.file("lib/internal/buffers.js", function(exports, require, module, __filename, __dirname){
-
-"use strict";
-
-exports.__esModule = true;
-exports.buffers = exports.BUFFER_OVERFLOW = undefined;
-
-var _utils = /*#__PURE__*/require("./utils");
-
-var BUFFER_OVERFLOW = exports.BUFFER_OVERFLOW = "Channel's Buffer overflow!";
-
-var ON_OVERFLOW_THROW = 1;
-var ON_OVERFLOW_DROP = 2;
-var ON_OVERFLOW_SLIDE = 3;
-var ON_OVERFLOW_EXPAND = 4;
-
-var zeroBuffer = { isEmpty: _utils.kTrue, put: _utils.noop, take: _utils.noop };
-
-function ringBuffer() {
-  var limit = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
-  var overflowAction = arguments[1];
-
-  var arr = new Array(limit);
-  var length = 0;
-  var pushIndex = 0;
-  var popIndex = 0;
-
-  var push = function push(it) {
-    arr[pushIndex] = it;
-    pushIndex = (pushIndex + 1) % limit;
-    length++;
-  };
-
-  var take = function take() {
-    if (length != 0) {
-      var it = arr[popIndex];
-      arr[popIndex] = null;
-      length--;
-      popIndex = (popIndex + 1) % limit;
-      return it;
-    }
-  };
-
-  var flush = function flush() {
-    var items = [];
-    while (length) {
-      items.push(take());
-    }
-    return items;
-  };
-
-  return {
-    isEmpty: function isEmpty() {
-      return length == 0;
-    },
-    put: function put(it) {
-      if (length < limit) {
-        push(it);
-      } else {
-        var doubledLimit = void 0;
-        switch (overflowAction) {
-          case ON_OVERFLOW_THROW:
-            throw new Error(BUFFER_OVERFLOW);
-          case ON_OVERFLOW_SLIDE:
-            arr[pushIndex] = it;
-            pushIndex = (pushIndex + 1) % limit;
-            popIndex = pushIndex;
-            break;
-          case ON_OVERFLOW_EXPAND:
-            doubledLimit = 2 * limit;
-
-            arr = flush();
-
-            length = arr.length;
-            pushIndex = arr.length;
-            popIndex = 0;
-
-            arr.length = doubledLimit;
-            limit = doubledLimit;
-
-            push(it);
-            break;
-          default:
-          // DROP
-        }
-      }
-    },
-    take: take,
-    flush: flush
-  };
-}
-
-var buffers = exports.buffers = {
-  none: function none() {
-    return zeroBuffer;
-  },
-  fixed: function fixed(limit) {
-    return ringBuffer(limit, ON_OVERFLOW_THROW);
-  },
-  dropping: function dropping(limit) {
-    return ringBuffer(limit, ON_OVERFLOW_DROP);
-  },
-  sliding: function sliding(limit) {
-    return ringBuffer(limit, ON_OVERFLOW_SLIDE);
-  },
-  expanding: function expanding(initialSize) {
-    return ringBuffer(initialSize, ON_OVERFLOW_EXPAND);
-  }
-};
-});
-___scope___.file("lib/internal/sagaHelpers/takeLatest.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-exports.__esModule = true;
-exports.default = takeLatest;
-
-var _fsmIterator = /*#__PURE__*/require('./fsmIterator');
-
-var _fsmIterator2 = /*#__PURE__*/_interopRequireDefault(_fsmIterator);
-
-var _io = /*#__PURE__*/require('../io');
-
-var _channel = /*#__PURE__*/require('../channel');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function takeLatest(patternOrChannel, worker) {
-  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-    args[_key - 2] = arguments[_key];
-  }
-
-  var yTake = { done: false, value: (0, _io.take)(patternOrChannel) };
-  var yFork = function yFork(ac) {
-    return { done: false, value: _io.fork.apply(undefined, [worker].concat(args, [ac])) };
-  };
-  var yCancel = function yCancel(task) {
-    return { done: false, value: (0, _io.cancel)(task) };
-  };
-
-  var task = void 0,
-      action = void 0;
-  var setTask = function setTask(t) {
-    return task = t;
-  };
-  var setAction = function setAction(ac) {
-    return action = ac;
-  };
-
-  return (0, _fsmIterator2.default)({
-    q1: function q1() {
-      return ['q2', yTake, setAction];
-    },
-    q2: function q2() {
-      return action === _channel.END ? [_fsmIterator.qEnd] : task ? ['q3', yCancel(task)] : ['q1', yFork(action), setTask];
-    },
-    q3: function q3() {
-      return ['q1', yFork(action), setTask];
-    }
-  }, 'q1', 'takeLatest(' + (0, _fsmIterator.safeName)(patternOrChannel) + ', ' + worker.name + ')');
-}
-});
-___scope___.file("lib/internal/sagaHelpers/throttle.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-exports.__esModule = true;
-exports.default = throttle;
-
-var _fsmIterator = /*#__PURE__*/require('./fsmIterator');
-
-var _fsmIterator2 = /*#__PURE__*/_interopRequireDefault(_fsmIterator);
-
-var _io = /*#__PURE__*/require('../io');
-
-var _channel = /*#__PURE__*/require('../channel');
-
-var _buffers = /*#__PURE__*/require('../buffers');
-
-var _utils = /*#__PURE__*/require('../utils');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function throttle(delayLength, pattern, worker) {
-  for (var _len = arguments.length, args = Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
-    args[_key - 3] = arguments[_key];
-  }
-
-  var action = void 0,
-      channel = void 0;
-
-  var yActionChannel = { done: false, value: (0, _io.actionChannel)(pattern, _buffers.buffers.sliding(1)) };
-  var yTake = function yTake() {
-    return { done: false, value: (0, _io.take)(channel) };
-  };
-  var yFork = function yFork(ac) {
-    return { done: false, value: _io.fork.apply(undefined, [worker].concat(args, [ac])) };
-  };
-  var yDelay = { done: false, value: (0, _io.call)(_utils.delay, delayLength) };
-
-  var setAction = function setAction(ac) {
-    return action = ac;
-  };
-  var setChannel = function setChannel(ch) {
-    return channel = ch;
-  };
-
-  return (0, _fsmIterator2.default)({
-    q1: function q1() {
-      return ['q2', yActionChannel, setChannel];
-    },
-    q2: function q2() {
-      return ['q3', yTake(), setAction];
-    },
-    q3: function q3() {
-      return action === _channel.END ? [_fsmIterator.qEnd] : ['q4', yFork(action)];
-    },
-    q4: function q4() {
-      return ['q2', yDelay];
-    }
-  }, 'q1', 'throttle(' + (0, _fsmIterator.safeName)(pattern) + ', ' + worker.name + ')');
-}
-});
 ___scope___.file("lib/internal/middleware.js", function(exports, require, module, __filename, __dirname){
 /* fuse:injection: */ var process = require("process");
 'use strict';
@@ -54325,141 +54483,6 @@ function sagaMiddlewareFactory() {
 
   return sagaMiddleware;
 }
-});
-___scope___.file("lib/effects.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-exports.__esModule = true;
-
-var _io = /*#__PURE__*/require('./internal/io');
-
-Object.defineProperty(exports, 'take', {
-  enumerable: true,
-  get: function get() {
-    return _io.take;
-  }
-});
-Object.defineProperty(exports, 'takem', {
-  enumerable: true,
-  get: function get() {
-    return _io.takem;
-  }
-});
-Object.defineProperty(exports, 'put', {
-  enumerable: true,
-  get: function get() {
-    return _io.put;
-  }
-});
-Object.defineProperty(exports, 'all', {
-  enumerable: true,
-  get: function get() {
-    return _io.all;
-  }
-});
-Object.defineProperty(exports, 'race', {
-  enumerable: true,
-  get: function get() {
-    return _io.race;
-  }
-});
-Object.defineProperty(exports, 'call', {
-  enumerable: true,
-  get: function get() {
-    return _io.call;
-  }
-});
-Object.defineProperty(exports, 'apply', {
-  enumerable: true,
-  get: function get() {
-    return _io.apply;
-  }
-});
-Object.defineProperty(exports, 'cps', {
-  enumerable: true,
-  get: function get() {
-    return _io.cps;
-  }
-});
-Object.defineProperty(exports, 'fork', {
-  enumerable: true,
-  get: function get() {
-    return _io.fork;
-  }
-});
-Object.defineProperty(exports, 'spawn', {
-  enumerable: true,
-  get: function get() {
-    return _io.spawn;
-  }
-});
-Object.defineProperty(exports, 'join', {
-  enumerable: true,
-  get: function get() {
-    return _io.join;
-  }
-});
-Object.defineProperty(exports, 'cancel', {
-  enumerable: true,
-  get: function get() {
-    return _io.cancel;
-  }
-});
-Object.defineProperty(exports, 'select', {
-  enumerable: true,
-  get: function get() {
-    return _io.select;
-  }
-});
-Object.defineProperty(exports, 'actionChannel', {
-  enumerable: true,
-  get: function get() {
-    return _io.actionChannel;
-  }
-});
-Object.defineProperty(exports, 'cancelled', {
-  enumerable: true,
-  get: function get() {
-    return _io.cancelled;
-  }
-});
-Object.defineProperty(exports, 'flush', {
-  enumerable: true,
-  get: function get() {
-    return _io.flush;
-  }
-});
-Object.defineProperty(exports, 'getContext', {
-  enumerable: true,
-  get: function get() {
-    return _io.getContext;
-  }
-});
-Object.defineProperty(exports, 'setContext', {
-  enumerable: true,
-  get: function get() {
-    return _io.setContext;
-  }
-});
-Object.defineProperty(exports, 'takeEvery', {
-  enumerable: true,
-  get: function get() {
-    return _io.takeEvery;
-  }
-});
-Object.defineProperty(exports, 'takeLatest', {
-  enumerable: true,
-  get: function get() {
-    return _io.takeLatest;
-  }
-});
-Object.defineProperty(exports, 'throttle', {
-  enumerable: true,
-  get: function get() {
-    return _io.throttle;
-  }
-});
 });
 ___scope___.file("lib/utils.js", function(exports, require, module, __filename, __dirname){
 
