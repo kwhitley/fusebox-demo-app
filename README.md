@@ -23,13 +23,14 @@ To get us off the ground running with simpe examples.
 ```bash
 git clone git@github.com:kwhitley/fusebox-demo-app.git myapp # clone repo to "myapp" folder
 cd myapp                            # enter "myapp" folder
-yarn                                # install dependencies
 rm -rf .git                         # wipe previous git history from repo
-git remote set origin git@github.com:yourname/my-app.git # replace origin reference with your own
+git init                            # initialize git
+git remote add origin git@github.com:yourname/my-app.git # replace origin reference with your own
 ```
 
 3. Edit `package.json` file in root of project to replace repo references, package name, desc, etc.  Then:
 ```
+yarn                                # install dependencies
 git add .                           # add all files to stage
 git commit -m 'initial commit'      # commit all files
 git push -u origin master           # set upstream link and push to save to your own repo
