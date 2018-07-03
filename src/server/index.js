@@ -30,7 +30,7 @@ app.use(express.static(staticPath))
 // example API entry
 app.get('/test', (req, res) =>
   res.json({
-    foo: 'bar',
+    foo: 'BAZ',
     mode: process.env.NODE_ENV,
     port: process.env.PORT,
     test: process.env.TEST,

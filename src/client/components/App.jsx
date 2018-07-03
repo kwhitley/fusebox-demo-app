@@ -4,7 +4,7 @@ import Navigation, { routes } from './Nav'
 
 const App = () =>
   <div>
-    <h1>FuseBox Workflow Demo</h1>
+    <h1>Boilerplate</h1>
     <Navigation />
     <div className="page-content">
       <Switch>

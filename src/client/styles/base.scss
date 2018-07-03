@@ -1,5 +1,5 @@
 body {
-  color: #222;
+  color: red;
   font-family: sans-serif;
   font-weight: lighter;
   height: 100%;
@@ -130,6 +130,7 @@ li {
 
 .groups-panel {
   padding-right: 3em;
+  overflow: visible;
 
   .edit-button {
     top: 0.3em;
@@ -161,4 +162,8 @@ li {
 
 .rst__moveHandle, .rst__loadingHandle {
   width: 2.2em;
+}
+
+.rst__rowContents {
+  padding: 0 0.1em 0 0.5em;
 }

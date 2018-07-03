@@ -57,7 +57,7 @@ app.use(_express2.default.static(staticPath));
 // example API entry
 app.get('/test', function (req, res) {
   return res.json({
-    foo: 'bar',
+    foo: 'BAZ',
     mode: process.env.NODE_ENV,
     port: process.env.PORT,
     test: process.env.TEST,
@@ -136,7 +136,7 @@ var registerTagMessages = exports.registerTagMessages = function registerTagMess
     io.emit('tags/update', { id: tag.id, values: tag.values });
   };
 
-  setInterval(updateTag, 50);
+  setInterval(updateTag, 30);
 };
 });
 return ___scope___.entry = "server/index.js";
