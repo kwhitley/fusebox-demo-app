@@ -31,9 +31,7 @@ var _createBrowserHistory = require('history/createBrowserHistory');
 
 var _createBrowserHistory2 = _interopRequireDefault(_createBrowserHistory);
 
-var _state = require('./state');
-
-var _state2 = _interopRequireDefault(_state);
+var _reduxAutomap = require('redux-automap');
 
 var _App = require('./components/App');
 
@@ -43,13 +41,13 @@ var _api = require('./state/api');
 
 var _api2 = _interopRequireDefault(_api);
 
+var _list = require('./state/list');
+
+var _list2 = _interopRequireDefault(_list);
+
 var _route = require('./state/route');
 
 var _route2 = _interopRequireDefault(_route);
-
-var _dashboards = require('./state/dashboards');
-
-var _dashboards2 = _interopRequireDefault(_dashboards);
 
 require('./styles/base.scss');
 
@@ -64,9 +62,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })();
 // import 'antd/dist/antd.min.css'
 
+var mergedReducers = (0, _reduxAutomap.merge)([_api2.default, _list2.default, _route2.default]);
 var history = (0, _createBrowserHistory2.default)();
 var sagaMiddleware = (0, _reduxSaga2.default)();
-var rootReducer = (0, _reduxImmutable.combineReducers)(_state2.default);
+var rootReducer = (0, _reduxImmutable.combineReducers)(mergedReducers);
 var store = (0, _redux.createStore)(rootReducer, (0, _redux.compose)((0, _redux.applyMiddleware)(sagaMiddleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
 
 // history binding... messy, abstract elsewhere or turn into module
@@ -74,9 +73,6 @@ history.listen(function (location) {
   var path = '' + location.pathname + location.search + location.hash;
   store.dispatch(_route2.default.actions.change(path));
 });
-
-store.dispatch(_dashboards2.default.addGroup('Newish Group', 1));
-store.dispatch(_dashboards2.default.addTagToGroup(6, 2));
 
 var path = '' + location.pathname + location.search + location.hash;
 store.dispatch(_route2.default.actions.change(path));
@@ -104,653 +100,12 @@ _reactDom2.default.render(_react2.default.createElement(
     return;
   }
 
+  reactHotLoader.register(mergedReducers, 'mergedReducers', 'unknown');
   reactHotLoader.register(history, 'history', 'unknown');
   reactHotLoader.register(sagaMiddleware, 'sagaMiddleware', 'unknown');
   reactHotLoader.register(rootReducer, 'rootReducer', 'unknown');
   reactHotLoader.register(store, 'store', 'unknown');
   reactHotLoader.register(path, 'path', 'unknown');
-  leaveModule(module);
-})();
-
-;
-});
-___scope___.file("client/state/index.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _reduxAutomap = require('redux-automap');
-
-var _list = require('./list');
-
-var _list2 = _interopRequireDefault(_list);
-
-var _api = require('./api');
-
-var _api2 = _interopRequireDefault(_api);
-
-var _route = require('./route');
-
-var _route2 = _interopRequireDefault(_route);
-
-var _dashboards = require('./dashboards');
-
-var _dashboards2 = _interopRequireDefault(_dashboards);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-(function () {
-  var enterModule = require('react-hot-loader').enterModule;
-
-  enterModule && enterModule(module);
-})();
-
-var _default = (0, _reduxAutomap.merge)([_list2.default, _api2.default, _route2.default, _dashboards2.default]);
-
-exports.default = _default;
-;
-
-(function () {
-  var reactHotLoader = require('react-hot-loader').default;
-
-  var leaveModule = require('react-hot-loader').leaveModule;
-
-  if (!reactHotLoader) {
-    return;
-  }
-
-  reactHotLoader.register(_default, 'default', 'unknown');
-  leaveModule(module);
-})();
-
-;
-});
-___scope___.file("client/state/list.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.actionReducers = exports.initialState = exports.selectors = exports.namespace = undefined;
-
-var _immutable = require('immutable');
-
-var _reduxAutomap = require('redux-automap');
-
-var _reselect = require('reselect');
-
-(function () {
-  var enterModule = require('react-hot-loader').enterModule;
-
-  enterModule && enterModule(module);
-})();
-
-var namespace = exports.namespace = 'list';
-
-var getItems = function getItems(state) {
-  return state.get('items');
-};
-var getNumItems = function getNumItems(state) {
-  return state.get('items').size;
-};
-var getHalfItems = function getHalfItems(items, number) {
-  return items.slice(0, Math.floor(number / 2));
-};
-
-var getItemsSorted = (0, _reselect.createSelector)([getItems], function (items) {
-  return items.sort(function (A, B) {
-    var a = B.get('name');
-    var b = A.get('name');
-
-    return a < b ? -1 : a > b ? 1 : 0;
-  }).reverse();
-});
-
-var getHalfItemsUnsorted = (0, _reselect.createSelector)([getItems, getNumItems], getHalfItems);
-
-var getHalfItemsSorted = (0, _reselect.createSelector)([getItemsSorted, getNumItems], getHalfItems);
-
-var selectors = exports.selectors = {
-  getItems: getItems, getNumItems: getNumItems, getItemsSorted: getItemsSorted, getHalfItemsUnsorted: getHalfItemsUnsorted, getHalfItemsSorted: getHalfItemsSorted
-};
-
-var Entry = new _immutable.Record({
-  id: undefined,
-  name: 'new item',
-  date: new Date(),
-  isActive: false
-});
-
-// initial state for reducer
-var initialState = exports.initialState = (0, _immutable.fromJS)({
-  items: [{ id: 1, name: 'foo', date: new Date(), isActive: true }, { id: 2, name: 'bar', date: new Date(), isActive: true }, { id: 3, name: 'baz', date: new Date(), isActive: true }, { id: 4, name: 'cat', date: new Date(), isActive: false }, { id: 5, name: 'miffles', date: new Date(), isActive: false }, { id: 6, name: 'vlad', date: new Date(), isActive: true }, { id: 7, name: 'baxter', date: new Date(), isActive: true }]
-});
-
-// define all action/reducer pairs here... add "type" attributes for
-var actionReducers = exports.actionReducers = [{
-  addItem: function addItem() {
-    var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'new item';
-    return { type: 'list/ADD_ITEM', name: name };
-  },
-  reducer: function reducer(state, action) {
-    var nextID = state.get('items').maxBy(function (i) {
-      return i.get('id');
-    }).get('id') + 1;
-
-    return state.update('items', function (items) {
-      return items.push(new Entry({
-        id: nextID,
-        name: action.name,
-        date: new Date()
-      }));
-    });
-  }
-}, {
-  toggleIsActive: function toggleIsActive(id) {
-    return { type: 'list/TOGGLE_ITEM_IS_ACTIVE', id: id };
-  },
-  reducer: function reducer(state, action) {
-    return state.update('items', function (items) {
-      return items.map(function (item) {
-        return item.get('id') === action.id ? item.update('isActive', function (active) {
-          return !active;
-        }) : item;
-      });
-    });
-  }
-}, {
-  // type: constants.REMOVE_ITEM,
-  removeItem: function removeItem(id) {
-    return { type: 'list/REMOVE_ITEM', id: id };
-  },
-  reducer: function reducer(state, action) {
-    return state.update('items', function (items) {
-      return items.filter(function (i) {
-        return i.get('id') !== action.id;
-      });
-    });
-  }
-}];
-
-var _default = (0, _reduxAutomap.automap)({ namespace: namespace, actionReducers: actionReducers, initialState: initialState, selectors: selectors, foo: 'bar' });
-
-exports.default = _default;
-;
-
-(function () {
-  var reactHotLoader = require('react-hot-loader').default;
-
-  var leaveModule = require('react-hot-loader').leaveModule;
-
-  if (!reactHotLoader) {
-    return;
-  }
-
-  reactHotLoader.register(namespace, 'namespace', 'unknown');
-  reactHotLoader.register(getItems, 'getItems', 'unknown');
-  reactHotLoader.register(getNumItems, 'getNumItems', 'unknown');
-  reactHotLoader.register(getHalfItems, 'getHalfItems', 'unknown');
-  reactHotLoader.register(getItemsSorted, 'getItemsSorted', 'unknown');
-  reactHotLoader.register(getHalfItemsUnsorted, 'getHalfItemsUnsorted', 'unknown');
-  reactHotLoader.register(getHalfItemsSorted, 'getHalfItemsSorted', 'unknown');
-  reactHotLoader.register(selectors, 'selectors', 'unknown');
-  reactHotLoader.register(Entry, 'Entry', 'unknown');
-  reactHotLoader.register(initialState, 'initialState', 'unknown');
-  reactHotLoader.register(actionReducers, 'actionReducers', 'unknown');
-  reactHotLoader.register(_default, 'default', 'unknown');
-  leaveModule(module);
-})();
-
-;
-});
-___scope___.file("client/state/api.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.actionReducers = exports.initialState = exports.namespace = undefined;
-
-var _regenerator = require('babel-runtime/regenerator');
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _entries = require('babel-runtime/core-js/object/entries');
-
-var _entries2 = _interopRequireDefault(_entries);
-
-var _immutable = require('immutable');
-
-var _reduxAutomap = require('redux-automap');
-
-var _reselect = require('reselect');
-
-var _axios = require('axios');
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _effects = require("redux-saga/lib/effects.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-(function () {
-  var enterModule = require('react-hot-loader').enterModule;
-
-  enterModule && enterModule(module);
-})();
-
-var _marked = /*#__PURE__*/_regenerator2.default.mark(fetchPackageInfo),
-    _marked2 = /*#__PURE__*/_regenerator2.default.mark(watcherSaga);
-
-var namespace = exports.namespace = 'api';
-
-var byName = function byName(a, b) {
-  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-};
-var toDepsArray = function toDepsArray(deps) {
-  return deps && (0, _entries2.default)(deps.toJS()).map(function (i) {
-    return { name: i[0], version: i[1] };
-  }).sort(byName);
-};
-
-var getPackage = function getPackage(state) {
-  return state.getIn(['package']);
-};
-var getTimesLoaded = function getTimesLoaded(state) {
-  return state.get('timesLoaded');
-};
-var getDependencies = function getDependencies(state) {
-  return state.getIn(['package', 'data', 'dependencies']);
-};
-var getDevDependencies = function getDevDependencies(state) {
-  return state.getIn(['package', 'data', 'devDependencies']);
-};
-var getDependenciesAsArray = (0, _reselect.createSelector)([getDependencies], toDepsArray);
-var getDevDependenciesAsArray = (0, _reselect.createSelector)([getDevDependencies], toDepsArray);
-
-var selectors = {
-  getPackage: getPackage,
-  getTimesLoaded: getTimesLoaded,
-  getDependencies: getDependencies,
-  getDevDependencies: getDevDependencies,
-  getDependenciesAsArray: getDependenciesAsArray,
-  getDevDependenciesAsArray: getDevDependenciesAsArray
-};
-
-var Resource = (0, _immutable.Record)({
-  isLoading: false,
-  success: undefined,
-  error: undefined,
-  data: undefined
-});
-
-// initial state for reducer
-var initialState = exports.initialState = (0, _immutable.fromJS)({
-  package: new Resource(),
-  timesLoaded: 0
-});
-
-function fetchPackageInfo() {
-  var data;
-  return _regenerator2.default.wrap(function fetchPackageInfo$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.prev = 0;
-          _context.next = 3;
-          return (0, _effects.call)(function () {
-            return _axios2.default.get('/package.json').then(function (r) {
-              return (0, _immutable.fromJS)(r.data);
-            });
-          });
-
-        case 3:
-          data = _context.sent;
-          _context.next = 6;
-          return (0, _effects.put)({ type: 'api/LOAD_PACKAGE_INFO_SUCCESS', data: data });
-
-        case 6:
-          _context.next = 13;
-          break;
-
-        case 8:
-          _context.prev = 8;
-          _context.t0 = _context['catch'](0);
-
-          console.log('fetchPackageInfo', _context.t0);
-          _context.next = 13;
-          return (0, _effects.put)({ type: 'api/LOAD_PACKAGE_INFO_ERROR', error: _context.t0.message });
-
-        case 13:
-        case 'end':
-          return _context.stop();
-      }
-    }
-  }, _marked, this, [[0, 8]]);
-}
-
-// watcher saga: watches for actions dispatched to the store, starts worker saga
-function watcherSaga() {
-  return _regenerator2.default.wrap(function watcherSaga$(_context2) {
-    while (1) {
-      switch (_context2.prev = _context2.next) {
-        case 0:
-          _context2.next = 2;
-          return (0, _effects.takeLatest)('api/LOAD_PACKAGE_INFO', fetchPackageInfo);
-
-        case 2:
-        case 'end':
-          return _context2.stop();
-      }
-    }
-  }, _marked2, this);
-}
-
-var sagas = {
-  watcherSaga: watcherSaga,
-  fetchPackageInfo: fetchPackageInfo
-
-  // define all action/reducer pairs here... add 'type' attributes for
-};var actionReducers = exports.actionReducers = [{
-  loadPackageInfo: function loadPackageInfo() {
-    return { type: 'api/LOAD_PACKAGE_INFO' };
-  },
-  reducer: function reducer(state) {
-    return state.set('package', new Resource({ isLoading: true, data: state.getIn(['package', 'data']) }));
-  }
-}, {
-  loadPackageInfoSuccess: function loadPackageInfoSuccess(data) {
-    return { type: 'api/LOAD_PACKAGE_INFO_SUCCESS', data: data };
-  },
-  reducer: function reducer(state, action) {
-    return state.set('package', new Resource({ isLoading: false, success: true, data: action.data })).update('timesLoaded', function (count) {
-      return count + 1;
-    });
-  }
-}, {
-  loadPackageInfoError: function loadPackageInfoError(error) {
-    return { type: 'api/LOAD_PACKAGE_INFO_ERROR', error: error };
-  },
-  reducer: function reducer(state, action) {
-    return state.set('package', new Resource({ error: action.error, success: false }));
-  }
-}];
-
-var _default = (0, _reduxAutomap.automap)({ sagas: sagas, namespace: namespace, actionReducers: actionReducers, initialState: initialState, selectors: selectors });
-
-exports.default = _default;
-;
-
-(function () {
-  var reactHotLoader = require('react-hot-loader').default;
-
-  var leaveModule = require('react-hot-loader').leaveModule;
-
-  if (!reactHotLoader) {
-    return;
-  }
-
-  reactHotLoader.register(namespace, 'namespace', 'unknown');
-  reactHotLoader.register(byName, 'byName', 'unknown');
-  reactHotLoader.register(toDepsArray, 'toDepsArray', 'unknown');
-  reactHotLoader.register(getPackage, 'getPackage', 'unknown');
-  reactHotLoader.register(getTimesLoaded, 'getTimesLoaded', 'unknown');
-  reactHotLoader.register(getDependencies, 'getDependencies', 'unknown');
-  reactHotLoader.register(getDevDependencies, 'getDevDependencies', 'unknown');
-  reactHotLoader.register(getDependenciesAsArray, 'getDependenciesAsArray', 'unknown');
-  reactHotLoader.register(getDevDependenciesAsArray, 'getDevDependenciesAsArray', 'unknown');
-  reactHotLoader.register(selectors, 'selectors', 'unknown');
-  reactHotLoader.register(Resource, 'Resource', 'unknown');
-  reactHotLoader.register(initialState, 'initialState', 'unknown');
-  reactHotLoader.register(fetchPackageInfo, 'fetchPackageInfo', 'unknown');
-  reactHotLoader.register(watcherSaga, 'watcherSaga', 'unknown');
-  reactHotLoader.register(sagas, 'sagas', 'unknown');
-  reactHotLoader.register(actionReducers, 'actionReducers', 'unknown');
-  reactHotLoader.register(_default, 'default', 'unknown');
-  leaveModule(module);
-})();
-
-;
-});
-___scope___.file("client/state/route.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.actionReducers = exports.initialState = exports.namespace = undefined;
-
-var _reduxAutomap = require('redux-automap');
-
-(function () {
-  var enterModule = require('react-hot-loader').enterModule;
-
-  enterModule && enterModule(module);
-})();
-
-var namespace = exports.namespace = 'route';
-
-// initial state for reducer
-var initialState = exports.initialState = '/';
-
-// define all action/reducer pairs here... add "type" attributes for
-var actionReducers = exports.actionReducers = [{
-  change: function change(path) {
-    return { type: 'route/CHANGE', path: path };
-  },
-  reducer: function reducer(state, action) {
-    return action.path;
-  }
-}];
-
-var _default = (0, _reduxAutomap.automap)({ namespace: namespace, actionReducers: actionReducers, initialState: initialState });
-
-exports.default = _default;
-;
-
-(function () {
-  var reactHotLoader = require('react-hot-loader').default;
-
-  var leaveModule = require('react-hot-loader').leaveModule;
-
-  if (!reactHotLoader) {
-    return;
-  }
-
-  reactHotLoader.register(namespace, 'namespace', 'unknown');
-  reactHotLoader.register(initialState, 'initialState', 'unknown');
-  reactHotLoader.register(actionReducers, 'actionReducers', 'unknown');
-  reactHotLoader.register(_default, 'default', 'unknown');
-  leaveModule(module);
-})();
-
-;
-});
-___scope___.file("client/state/dashboards.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.actionReducers = exports.initialState = exports.selectors = exports.namespace = undefined;
-
-var _immutable = require('immutable');
-
-var _reduxAutomap = require('redux-automap');
-
-var _reselect = require('reselect');
-
-var _dashboards = require('./dashboards.models');
-
-(function () {
-  var enterModule = require('react-hot-loader').enterModule;
-
-  enterModule && enterModule(module);
-})();
-
-var namespace = exports.namespace = 'dashboards';
-
-var getTags = function getTags(state) {
-  return state.get('tags');
-};
-var getGroups = function getGroups(state) {
-  return state.get('groups');
-};
-var findTag = function findTag(state, id) {
-  return state.get('tags').find(function (tag) {
-    return tag.get('id') === id;
-  });
-};
-var findGroup = function findGroup(state, id) {
-  return state.get('groups').find(function (group) {
-    return group.get('id') === id;
-  });
-};
-var getLastId = function getLastId(items) {
-  return items.maxBy(function (i) {
-    return i.get('id');
-  }).get('id');
-};
-// const getLastTagID = createSelector(getTags, getLastId)
-var getLastGroupID = (0, _reselect.createSelector)(getGroups, getLastId);
-
-var selectors = exports.selectors = {
-  getTags: getTags, findTag: findTag
-
-  // initial state for reducer
-};var initialState = exports.initialState = (0, _immutable.fromJS)({
-  tags: [{ id: 1, name: 'foo' }, { id: 2, name: 'bar' }, { id: 3, name: 'baz' }, { id: 4, name: 'cat' }, { id: 5, name: 'miffles' }, { id: 6, name: 'vlad' }, { id: 7, name: 'baxter' }],
-  groups: [new _dashboards.Group({ id: 1, name: 'First Group' })]
-});
-
-// define all action/reducer pairs here... add "type" attributes for
-var actionReducers = exports.actionReducers = [{
-  addGroup: function addGroup(name, parent) {
-    return { type: 'list/ADD_GROUP', name: name, parent: parent };
-  },
-  reducer: function reducer(state, action) {
-    var nextID = getLastGroupID(state) + 1;
-
-    return state.update('groups', function (groups) {
-      return groups.push(new _dashboards.Group({ id: nextID, name: action.name, parent: action.parent }));
-    });
-  }
-}, {
-  addTagToGroup: function addTagToGroup(tagID, groupID) {
-    return { type: 'list/ADD_TAG_TO_GROUP', tagID: tagID, groupID: groupID };
-  },
-  reducer: function reducer(state, action) {
-    var tag = findTag(state, action.tagID);
-    var matchedGroup = findGroup(state, action.groupID);
-
-    // console.log('matched tag', tag.toJS())
-    // console.log('matched group', matchedGroup.toJS())
-
-    if (!tag) throw new Error('no tag found with id=' + action.tagID, action);
-    if (!matchedGroup) throw new Error('no group found with id=' + action.groupID, action);
-
-    return state.update('groups', function (groups) {
-      return groups.map(function (group) {
-        return group === matchedGroup ? group.update('tags', function (tags) {
-          return tags.push(new _dashboards.GroupedTag({ id: tag.get('id'), name: tag.get('name') }));
-        }) : group;
-      });
-    });
-  }
-}];
-
-var _default = (0, _reduxAutomap.automap)({ namespace: namespace, actionReducers: actionReducers, initialState: initialState, selectors: selectors });
-
-exports.default = _default;
-;
-
-(function () {
-  var reactHotLoader = require('react-hot-loader').default;
-
-  var leaveModule = require('react-hot-loader').leaveModule;
-
-  if (!reactHotLoader) {
-    return;
-  }
-
-  reactHotLoader.register(namespace, 'namespace', 'unknown');
-  reactHotLoader.register(getTags, 'getTags', 'unknown');
-  reactHotLoader.register(getGroups, 'getGroups', 'unknown');
-  reactHotLoader.register(findTag, 'findTag', 'unknown');
-  reactHotLoader.register(findGroup, 'findGroup', 'unknown');
-  reactHotLoader.register(getLastId, 'getLastId', 'unknown');
-  reactHotLoader.register(getLastGroupID, 'getLastGroupID', 'unknown');
-  reactHotLoader.register(selectors, 'selectors', 'unknown');
-  reactHotLoader.register(initialState, 'initialState', 'unknown');
-  reactHotLoader.register(actionReducers, 'actionReducers', 'unknown');
-  reactHotLoader.register(_default, 'default', 'unknown');
-  leaveModule(module);
-})();
-
-;
-});
-___scope___.file("client/state/dashboards.models.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.GroupedTag = exports.Tag = exports.Group = undefined;
-
-var _immutable = require('immutable');
-
-(function () {
-  var enterModule = require('react-hot-loader').enterModule;
-
-  enterModule && enterModule(module);
-})();
-
-// initial state for reducer
-var Group = exports.Group = new _immutable.Record({
-  id: undefined,
-  path: ['Assets', 'Region 1', 'Pumps'],
-  name: 'New Group',
-  parent: undefined,
-  tags: new _immutable.List()
-});
-
-// initial state for reducer
-var Tag = exports.Tag = new _immutable.Record({
-  id: undefined,
-  name: 'New Tag'
-});
-
-var GroupedTag = exports.GroupedTag = new _immutable.Record({
-  id: undefined,
-  name: 'New Grouped Tag'
-});
-
-// initial state for reducer
-var _default = { Group: Group, Tag: Tag, GroupedTag: GroupedTag };
-exports.default = _default;
-;
-
-(function () {
-  var reactHotLoader = require('react-hot-loader').default;
-
-  var leaveModule = require('react-hot-loader').leaveModule;
-
-  if (!reactHotLoader) {
-    return;
-  }
-
-  reactHotLoader.register(Group, 'Group', 'unknown');
-  reactHotLoader.register(Tag, 'Tag', 'unknown');
-  reactHotLoader.register(GroupedTag, 'GroupedTag', 'unknown');
-  reactHotLoader.register(_default, 'default', 'unknown');
   leaveModule(module);
 })();
 
@@ -855,10 +210,6 @@ var _List = require('./pages/List');
 
 var _Package = require('./pages/Package');
 
-var _Groups = require('./pages/Groups');
-
-var _Groups2 = _interopRequireDefault(_Groups);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (function () {
@@ -870,7 +221,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // pages
 
 
-var routes = exports.routes = [{ path: '/list', name: 'List', component: _List.ConnectedList }, { path: '/package', name: 'Package', component: _Package.ConnectedPackage }, { path: '/groups', name: 'Groups Demo', component: _Groups2.default }];
+var routes = exports.routes = [{ path: '/list', name: 'List', component: _List.ConnectedList }, { path: '/package', name: 'Package', component: _Package.ConnectedPackage }];
 
 var Nav = exports.Nav = function Nav() {
   return _react2.default.createElement(
@@ -1285,6 +636,145 @@ exports.default = _default;
 
 ;
 });
+___scope___.file("client/state/list.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.actionReducers = exports.initialState = exports.selectors = exports.namespace = undefined;
+
+var _immutable = require('immutable');
+
+var _reduxAutomap = require('redux-automap');
+
+var _reselect = require('reselect');
+
+(function () {
+  var enterModule = require('react-hot-loader').enterModule;
+
+  enterModule && enterModule(module);
+})();
+
+var namespace = exports.namespace = 'list';
+
+var getItems = function getItems(state) {
+  return state.get('items');
+};
+var getNumItems = function getNumItems(state) {
+  return state.get('items').size;
+};
+var getHalfItems = function getHalfItems(items, number) {
+  return items.slice(0, Math.floor(number / 2));
+};
+
+var getItemsSorted = (0, _reselect.createSelector)([getItems], function (items) {
+  return items.sort(function (A, B) {
+    var a = B.get('name');
+    var b = A.get('name');
+
+    return a < b ? -1 : a > b ? 1 : 0;
+  }).reverse();
+});
+
+var getHalfItemsUnsorted = (0, _reselect.createSelector)([getItems, getNumItems], getHalfItems);
+
+var getHalfItemsSorted = (0, _reselect.createSelector)([getItemsSorted, getNumItems], getHalfItems);
+
+var selectors = exports.selectors = {
+  getItems: getItems, getNumItems: getNumItems, getItemsSorted: getItemsSorted, getHalfItemsUnsorted: getHalfItemsUnsorted, getHalfItemsSorted: getHalfItemsSorted
+};
+
+var Entry = new _immutable.Record({
+  id: undefined,
+  name: 'new item',
+  date: new Date(),
+  isActive: false
+});
+
+// initial state for reducer
+var initialState = exports.initialState = (0, _immutable.fromJS)({
+  items: [{ id: 1, name: 'foo', date: new Date(), isActive: true }, { id: 2, name: 'bar', date: new Date(), isActive: true }, { id: 3, name: 'baz', date: new Date(), isActive: true }, { id: 4, name: 'cat', date: new Date(), isActive: false }, { id: 5, name: 'miffles', date: new Date(), isActive: false }, { id: 6, name: 'vlad', date: new Date(), isActive: true }, { id: 7, name: 'baxter', date: new Date(), isActive: true }]
+});
+
+// define all action/reducer pairs here... add "type" attributes for
+var actionReducers = exports.actionReducers = [{
+  addItem: function addItem() {
+    var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'new item';
+    return { type: 'list/ADD_ITEM', name: name };
+  },
+  reducer: function reducer(state, action) {
+    var nextID = state.get('items').maxBy(function (i) {
+      return i.get('id');
+    }).get('id') + 1;
+
+    return state.update('items', function (items) {
+      return items.push(new Entry({
+        id: nextID,
+        name: action.name,
+        date: new Date()
+      }));
+    });
+  }
+}, {
+  toggleIsActive: function toggleIsActive(id) {
+    return { type: 'list/TOGGLE_ITEM_IS_ACTIVE', id: id };
+  },
+  reducer: function reducer(state, action) {
+    return state.update('items', function (items) {
+      return items.map(function (item) {
+        return item.get('id') === action.id ? item.update('isActive', function (active) {
+          return !active;
+        }) : item;
+      });
+    });
+  }
+}, {
+  // type: constants.REMOVE_ITEM,
+  removeItem: function removeItem(id) {
+    return { type: 'list/REMOVE_ITEM', id: id };
+  },
+  reducer: function reducer(state, action) {
+    return state.update('items', function (items) {
+      return items.filter(function (i) {
+        return i.get('id') !== action.id;
+      });
+    });
+  }
+}];
+
+var _default = (0, _reduxAutomap.automap)({ namespace: namespace, actionReducers: actionReducers, initialState: initialState, selectors: selectors, foo: 'bar' });
+
+exports.default = _default;
+;
+
+(function () {
+  var reactHotLoader = require('react-hot-loader').default;
+
+  var leaveModule = require('react-hot-loader').leaveModule;
+
+  if (!reactHotLoader) {
+    return;
+  }
+
+  reactHotLoader.register(namespace, 'namespace', 'unknown');
+  reactHotLoader.register(getItems, 'getItems', 'unknown');
+  reactHotLoader.register(getNumItems, 'getNumItems', 'unknown');
+  reactHotLoader.register(getHalfItems, 'getHalfItems', 'unknown');
+  reactHotLoader.register(getItemsSorted, 'getItemsSorted', 'unknown');
+  reactHotLoader.register(getHalfItemsUnsorted, 'getHalfItemsUnsorted', 'unknown');
+  reactHotLoader.register(getHalfItemsSorted, 'getHalfItemsSorted', 'unknown');
+  reactHotLoader.register(selectors, 'selectors', 'unknown');
+  reactHotLoader.register(Entry, 'Entry', 'unknown');
+  reactHotLoader.register(initialState, 'initialState', 'unknown');
+  reactHotLoader.register(actionReducers, 'actionReducers', 'unknown');
+  reactHotLoader.register(_default, 'default', 'unknown');
+  leaveModule(module);
+})();
+
+;
+});
 ___scope___.file("client/components/pages/Package/index.jsx", function(exports, require, module, __filename, __dirname){
 
 'use strict';
@@ -1640,23 +1130,34 @@ exports.default = _default;
 
 ;
 });
-___scope___.file("client/components/pages/Groups/index.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("client/state/api.js", function(exports, require, module, __filename, __dirname){
 
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.actionReducers = exports.initialState = exports.namespace = undefined;
 
-var _react = require('react');
+var _regenerator = require('babel-runtime/regenerator');
 
-var _react2 = _interopRequireDefault(_react);
+var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _semanticUiReact = require('semantic-ui-react');
+var _entries = require('babel-runtime/core-js/object/entries');
 
-var _GroupsNavigation = require('./GroupsNavigation');
+var _entries2 = _interopRequireDefault(_entries);
 
-var _GroupsNavigation2 = _interopRequireDefault(_GroupsNavigation);
+var _immutable = require('immutable');
+
+var _reduxAutomap = require('redux-automap');
+
+var _reselect = require('reselect');
+
+var _axios = require('axios');
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _effects = require("redux-saga/lib/effects.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1666,38 +1167,145 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   enterModule && enterModule(module);
 })();
 
-var cards = Array(7).fill(0).map(function (i) {
-  return { name: 'Tag #' + Math.random().toString().slice(0, 6) };
-});
+var _marked = /*#__PURE__*/_regenerator2.default.mark(fetchPackageInfo),
+    _marked2 = /*#__PURE__*/_regenerator2.default.mark(watcherSaga);
 
-var Groups = function Groups() {
-  return _react2.default.createElement(
-    _semanticUiReact.Grid,
-    { divided: true },
-    _react2.default.createElement(
-      _semanticUiReact.Grid.Row,
-      null,
-      _react2.default.createElement(
-        _semanticUiReact.Grid.Column,
-        { width: 4 },
-        _react2.default.createElement(_GroupsNavigation2.default, null)
-      ),
-      _react2.default.createElement(
-        _semanticUiReact.Grid.Column,
-        { width: 12 },
-        _react2.default.createElement(
-          _semanticUiReact.Card.Group,
-          { className: 'cards', itemsPerRow: 3 },
-          cards.map(function (card) {
-            return _react2.default.createElement(_semanticUiReact.Card, { key: card.name, header: card.name, description: card.name });
-          })
-        )
-      )
-    )
-  );
+var namespace = exports.namespace = 'api';
+
+var byName = function byName(a, b) {
+  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+};
+var toDepsArray = function toDepsArray(deps) {
+  return deps && (0, _entries2.default)(deps.toJS()).map(function (i) {
+    return { name: i[0], version: i[1] };
+  }).sort(byName);
 };
 
-var _default = Groups;
+var getPackage = function getPackage(state) {
+  return state.getIn(['package']);
+};
+var getTimesLoaded = function getTimesLoaded(state) {
+  return state.get('timesLoaded');
+};
+var getDependencies = function getDependencies(state) {
+  return state.getIn(['package', 'data', 'dependencies']);
+};
+var getDevDependencies = function getDevDependencies(state) {
+  return state.getIn(['package', 'data', 'devDependencies']);
+};
+var getDependenciesAsArray = (0, _reselect.createSelector)([getDependencies], toDepsArray);
+var getDevDependenciesAsArray = (0, _reselect.createSelector)([getDevDependencies], toDepsArray);
+
+var selectors = {
+  getPackage: getPackage,
+  getTimesLoaded: getTimesLoaded,
+  getDependencies: getDependencies,
+  getDevDependencies: getDevDependencies,
+  getDependenciesAsArray: getDependenciesAsArray,
+  getDevDependenciesAsArray: getDevDependenciesAsArray
+};
+
+var Resource = (0, _immutable.Record)({
+  isLoading: false,
+  success: undefined,
+  error: undefined,
+  data: undefined
+});
+
+// initial state for reducer
+var initialState = exports.initialState = (0, _immutable.fromJS)({
+  package: new Resource(),
+  timesLoaded: 0
+});
+
+function fetchPackageInfo() {
+  var data;
+  return _regenerator2.default.wrap(function fetchPackageInfo$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.prev = 0;
+          _context.next = 3;
+          return (0, _effects.call)(function () {
+            return _axios2.default.get('/package.json').then(function (r) {
+              return (0, _immutable.fromJS)(r.data);
+            });
+          });
+
+        case 3:
+          data = _context.sent;
+          _context.next = 6;
+          return (0, _effects.put)({ type: 'api/LOAD_PACKAGE_INFO_SUCCESS', data: data });
+
+        case 6:
+          _context.next = 13;
+          break;
+
+        case 8:
+          _context.prev = 8;
+          _context.t0 = _context['catch'](0);
+
+          console.log('fetchPackageInfo', _context.t0);
+          _context.next = 13;
+          return (0, _effects.put)({ type: 'api/LOAD_PACKAGE_INFO_ERROR', error: _context.t0.message });
+
+        case 13:
+        case 'end':
+          return _context.stop();
+      }
+    }
+  }, _marked, this, [[0, 8]]);
+}
+
+// watcher saga: watches for actions dispatched to the store, starts worker saga
+function watcherSaga() {
+  return _regenerator2.default.wrap(function watcherSaga$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.next = 2;
+          return (0, _effects.takeLatest)('api/LOAD_PACKAGE_INFO', fetchPackageInfo);
+
+        case 2:
+        case 'end':
+          return _context2.stop();
+      }
+    }
+  }, _marked2, this);
+}
+
+var sagas = {
+  watcherSaga: watcherSaga,
+  fetchPackageInfo: fetchPackageInfo
+
+  // define all action/reducer pairs here... add 'type' attributes for
+};var actionReducers = exports.actionReducers = [{
+  loadPackageInfo: function loadPackageInfo() {
+    return { type: 'api/LOAD_PACKAGE_INFO' };
+  },
+  reducer: function reducer(state) {
+    return state.set('package', new Resource({ isLoading: true, data: state.getIn(['package', 'data']) }));
+  }
+}, {
+  loadPackageInfoSuccess: function loadPackageInfoSuccess(data) {
+    return { type: 'api/LOAD_PACKAGE_INFO_SUCCESS', data: data };
+  },
+  reducer: function reducer(state, action) {
+    return state.set('package', new Resource({ isLoading: false, success: true, data: action.data })).update('timesLoaded', function (count) {
+      return count + 1;
+    });
+  }
+}, {
+  loadPackageInfoError: function loadPackageInfoError(error) {
+    return { type: 'api/LOAD_PACKAGE_INFO_ERROR', error: error };
+  },
+  reducer: function reducer(state, action) {
+    return state.set('package', new Resource({ error: action.error, success: false }));
+  }
+}];
+
+var _default = (0, _reduxAutomap.automap)({ sagas: sagas, namespace: namespace, actionReducers: actionReducers, initialState: initialState, selectors: selectors });
+
 exports.default = _default;
 ;
 
@@ -1710,27 +1318,38 @@ exports.default = _default;
     return;
   }
 
-  reactHotLoader.register(cards, 'cards', 'unknown');
-  reactHotLoader.register(Groups, 'Groups', 'unknown');
+  reactHotLoader.register(namespace, 'namespace', 'unknown');
+  reactHotLoader.register(byName, 'byName', 'unknown');
+  reactHotLoader.register(toDepsArray, 'toDepsArray', 'unknown');
+  reactHotLoader.register(getPackage, 'getPackage', 'unknown');
+  reactHotLoader.register(getTimesLoaded, 'getTimesLoaded', 'unknown');
+  reactHotLoader.register(getDependencies, 'getDependencies', 'unknown');
+  reactHotLoader.register(getDevDependencies, 'getDevDependencies', 'unknown');
+  reactHotLoader.register(getDependenciesAsArray, 'getDependenciesAsArray', 'unknown');
+  reactHotLoader.register(getDevDependenciesAsArray, 'getDevDependenciesAsArray', 'unknown');
+  reactHotLoader.register(selectors, 'selectors', 'unknown');
+  reactHotLoader.register(Resource, 'Resource', 'unknown');
+  reactHotLoader.register(initialState, 'initialState', 'unknown');
+  reactHotLoader.register(fetchPackageInfo, 'fetchPackageInfo', 'unknown');
+  reactHotLoader.register(watcherSaga, 'watcherSaga', 'unknown');
+  reactHotLoader.register(sagas, 'sagas', 'unknown');
+  reactHotLoader.register(actionReducers, 'actionReducers', 'unknown');
   reactHotLoader.register(_default, 'default', 'unknown');
   leaveModule(module);
 })();
 
 ;
 });
-___scope___.file("client/components/pages/Groups/GroupsNavigation.jsx", function(exports, require, module, __filename, __dirname){
+___scope___.file("client/state/route.js", function(exports, require, module, __filename, __dirname){
 
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.actionReducers = exports.initialState = exports.namespace = undefined;
 
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _reduxAutomap = require('redux-automap');
 
 (function () {
   var enterModule = require('react-hot-loader').enterModule;
@@ -1738,15 +1357,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   enterModule && enterModule(module);
 })();
 
-var GroupsNavigation = function GroupsNavigation() {
-  return _react2.default.createElement(
-    'div',
-    null,
-    'Groups'
-  );
-};
+var namespace = exports.namespace = 'route';
 
-var _default = GroupsNavigation;
+// initial state for reducer
+var initialState = exports.initialState = '/';
+
+// define all action/reducer pairs here... add "type" attributes for
+var actionReducers = exports.actionReducers = [{
+  change: function change(path) {
+    return { type: 'route/CHANGE', path: path };
+  },
+  reducer: function reducer(state, action) {
+    return action.path;
+  }
+}];
+
+var _default = (0, _reduxAutomap.automap)({ namespace: namespace, actionReducers: actionReducers, initialState: initialState });
+
 exports.default = _default;
 ;
 
@@ -1759,7 +1386,9 @@ exports.default = _default;
     return;
   }
 
-  reactHotLoader.register(GroupsNavigation, 'GroupsNavigation', 'unknown');
+  reactHotLoader.register(namespace, 'namespace', 'unknown');
+  reactHotLoader.register(initialState, 'initialState', 'unknown');
+  reactHotLoader.register(actionReducers, 'actionReducers', 'unknown');
   reactHotLoader.register(_default, 'default', 'unknown');
   leaveModule(module);
 })();
@@ -3761,15 +3390,6 @@ module.exports = function spread(callback) {
 return ___scope___.entry = "index.js";
 });
 FuseBox.pkg("babel-runtime", {}, function(___scope___){
-___scope___.file("regenerator/index.js", function(exports, require, module, __filename, __dirname){
-
-module.exports = require("regenerator-runtime");
-
-});
-___scope___.file("core-js/object/entries.js", function(exports, require, module, __filename, __dirname){
-
-module.exports = { "default": require("core-js/library/fn/object/entries"), __esModule: true };
-});
 ___scope___.file("core-js/object/get-prototype-of.js", function(exports, require, module, __filename, __dirname){
 
 module.exports = { "default": require("core-js/library/fn/object/get-prototype-of"), __esModule: true };
@@ -3916,6 +3536,15 @@ ___scope___.file("core-js/object/create.js", function(exports, require, module, 
 
 module.exports = { "default": require("core-js/library/fn/object/create"), __esModule: true };
 });
+___scope___.file("regenerator/index.js", function(exports, require, module, __filename, __dirname){
+
+module.exports = require("regenerator-runtime");
+
+});
+___scope___.file("core-js/object/entries.js", function(exports, require, module, __filename, __dirname){
+
+module.exports = { "default": require("core-js/library/fn/object/entries"), __esModule: true };
+});
 return ___scope___.entry = "index.js";
 });
 FuseBox.pkg("classnames@2.2.5", {}, function(___scope___){
@@ -3974,23 +3603,193 @@ ___scope___.file("index.js", function(exports, require, module, __filename, __di
 return ___scope___.entry = "index.js";
 });
 FuseBox.pkg("core-js", {}, function(___scope___){
-___scope___.file("library/fn/object/entries.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("library/fn/object/get-own-property-descriptor.js", function(exports, require, module, __filename, __dirname){
 
-require('../../modules/es7.object.entries');
-module.exports = require('../../modules/_core').Object.entries;
+require('../../modules/es6.object.get-own-property-descriptor');
+var $Object = require('../../modules/_core').Object;
+module.exports = function getOwnPropertyDescriptor(it, key) {
+  return $Object.getOwnPropertyDescriptor(it, key);
+};
 
 });
-___scope___.file("library/modules/es7.object.entries.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("library/modules/es6.object.get-own-property-descriptor.js", function(exports, require, module, __filename, __dirname){
 
-// https://github.com/tc39/proposal-object-values-entries
-var $export = require('./_export');
-var $entries = require('./_object-to-array')(true);
+// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+var toIObject = require('./_to-iobject');
+var $getOwnPropertyDescriptor = require('./_object-gopd').f;
 
-$export($export.S, 'Object', {
-  entries: function entries(it) {
-    return $entries(it);
+require('./_object-sap')('getOwnPropertyDescriptor', function () {
+  return function getOwnPropertyDescriptor(it, key) {
+    return $getOwnPropertyDescriptor(toIObject(it), key);
+  };
+});
+
+});
+___scope___.file("library/modules/_to-iobject.js", function(exports, require, module, __filename, __dirname){
+
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = require('./_iobject');
+var defined = require('./_defined');
+module.exports = function (it) {
+  return IObject(defined(it));
+};
+
+});
+___scope___.file("library/modules/_iobject.js", function(exports, require, module, __filename, __dirname){
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = require('./_cof');
+// eslint-disable-next-line no-prototype-builtins
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+
+});
+___scope___.file("library/modules/_cof.js", function(exports, require, module, __filename, __dirname){
+
+var toString = {}.toString;
+
+module.exports = function (it) {
+  return toString.call(it).slice(8, -1);
+};
+
+});
+___scope___.file("library/modules/_defined.js", function(exports, require, module, __filename, __dirname){
+
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+});
+___scope___.file("library/modules/_object-gopd.js", function(exports, require, module, __filename, __dirname){
+
+var pIE = require('./_object-pie');
+var createDesc = require('./_property-desc');
+var toIObject = require('./_to-iobject');
+var toPrimitive = require('./_to-primitive');
+var has = require('./_has');
+var IE8_DOM_DEFINE = require('./_ie8-dom-define');
+var gOPD = Object.getOwnPropertyDescriptor;
+
+exports.f = require('./_descriptors') ? gOPD : function getOwnPropertyDescriptor(O, P) {
+  O = toIObject(O);
+  P = toPrimitive(P, true);
+  if (IE8_DOM_DEFINE) try {
+    return gOPD(O, P);
+  } catch (e) { /* empty */ }
+  if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
+};
+
+});
+___scope___.file("library/modules/_object-pie.js", function(exports, require, module, __filename, __dirname){
+
+exports.f = {}.propertyIsEnumerable;
+
+});
+___scope___.file("library/modules/_property-desc.js", function(exports, require, module, __filename, __dirname){
+
+module.exports = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+});
+___scope___.file("library/modules/_to-primitive.js", function(exports, require, module, __filename, __dirname){
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = require('./_is-object');
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function (it, S) {
+  if (!isObject(it)) return it;
+  var fn, val;
+  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+});
+___scope___.file("library/modules/_is-object.js", function(exports, require, module, __filename, __dirname){
+
+module.exports = function (it) {
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+});
+___scope___.file("library/modules/_has.js", function(exports, require, module, __filename, __dirname){
+
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
+});
+___scope___.file("library/modules/_ie8-dom-define.js", function(exports, require, module, __filename, __dirname){
+
+module.exports = !require('./_descriptors') && !require('./_fails')(function () {
+  return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
+});
+
+});
+___scope___.file("library/modules/_descriptors.js", function(exports, require, module, __filename, __dirname){
+
+// Thank's IE8 for his funny defineProperty
+module.exports = !require('./_fails')(function () {
+  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
+});
+
+});
+___scope___.file("library/modules/_fails.js", function(exports, require, module, __filename, __dirname){
+
+module.exports = function (exec) {
+  try {
+    return !!exec();
+  } catch (e) {
+    return true;
   }
+};
+
 });
+___scope___.file("library/modules/_dom-create.js", function(exports, require, module, __filename, __dirname){
+
+var isObject = require('./_is-object');
+var document = require('./_global').document;
+// typeof document.createElement is 'object' in old IE
+var is = isObject(document) && isObject(document.createElement);
+module.exports = function (it) {
+  return is ? document.createElement(it) : {};
+};
+
+});
+___scope___.file("library/modules/_global.js", function(exports, require, module, __filename, __dirname){
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self
+  // eslint-disable-next-line no-new-func
+  : Function('return this')();
+if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+
+});
+___scope___.file("library/modules/_object-sap.js", function(exports, require, module, __filename, __dirname){
+
+// most Object methods by ES6 should accept primitives
+var $export = require('./_export');
+var core = require('./_core');
+var fails = require('./_fails');
+module.exports = function (KEY, exec) {
+  var fn = (core.Object || {})[KEY] || Object[KEY];
+  var exp = {};
+  exp[KEY] = exec(fn);
+  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
+};
 
 });
 ___scope___.file("library/modules/_export.js", function(exports, require, module, __filename, __dirname){
@@ -4057,16 +3856,6 @@ $export.W = 32;  // wrap
 $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library`
 module.exports = $export;
-
-});
-___scope___.file("library/modules/_global.js", function(exports, require, module, __filename, __dirname){
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self
-  // eslint-disable-next-line no-new-func
-  : Function('return this')();
-if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
 
 });
 ___scope___.file("library/modules/_core.js", function(exports, require, module, __filename, __dirname){
@@ -4148,104 +3937,72 @@ module.exports = function (it) {
 };
 
 });
-___scope___.file("library/modules/_is-object.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("library/fn/object/define-property.js", function(exports, require, module, __filename, __dirname){
 
-module.exports = function (it) {
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
+require('../../modules/es6.object.define-property');
+var $Object = require('../../modules/_core').Object;
+module.exports = function defineProperty(it, key, desc) {
+  return $Object.defineProperty(it, key, desc);
 };
 
 });
-___scope___.file("library/modules/_ie8-dom-define.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("library/modules/es6.object.define-property.js", function(exports, require, module, __filename, __dirname){
 
-module.exports = !require('./_descriptors') && !require('./_fails')(function () {
-  return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
-});
-
-});
-___scope___.file("library/modules/_descriptors.js", function(exports, require, module, __filename, __dirname){
-
-// Thank's IE8 for his funny defineProperty
-module.exports = !require('./_fails')(function () {
-  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
-});
+var $export = require('./_export');
+// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
+$export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperty: require('./_object-dp').f });
 
 });
-___scope___.file("library/modules/_fails.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("library/fn/object/assign.js", function(exports, require, module, __filename, __dirname){
 
-module.exports = function (exec) {
-  try {
-    return !!exec();
-  } catch (e) {
-    return true;
-  }
-};
+require('../../modules/es6.object.assign');
+module.exports = require('../../modules/_core').Object.assign;
 
 });
-___scope___.file("library/modules/_dom-create.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("library/modules/es6.object.assign.js", function(exports, require, module, __filename, __dirname){
 
-var isObject = require('./_is-object');
-var document = require('./_global').document;
-// typeof document.createElement is 'object' in old IE
-var is = isObject(document) && isObject(document.createElement);
-module.exports = function (it) {
-  return is ? document.createElement(it) : {};
-};
+// 19.1.3.1 Object.assign(target, source)
+var $export = require('./_export');
+
+$export($export.S + $export.F, 'Object', { assign: require('./_object-assign') });
 
 });
-___scope___.file("library/modules/_to-primitive.js", function(exports, require, module, __filename, __dirname){
+___scope___.file("library/modules/_object-assign.js", function(exports, require, module, __filename, __dirname){
 
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = require('./_is-object');
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function (it, S) {
-  if (!isObject(it)) return it;
-  var fn, val;
-  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  throw TypeError("Can't convert object to primitive value");
-};
-
-});
-___scope___.file("library/modules/_property-desc.js", function(exports, require, module, __filename, __dirname){
-
-module.exports = function (bitmap, value) {
-  return {
-    enumerable: !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable: !(bitmap & 4),
-    value: value
-  };
-};
-
-});
-___scope___.file("library/modules/_has.js", function(exports, require, module, __filename, __dirname){
-
-var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function (it, key) {
-  return hasOwnProperty.call(it, key);
-};
-
-});
-___scope___.file("library/modules/_object-to-array.js", function(exports, require, module, __filename, __dirname){
-
+'use strict';
+// 19.1.2.1 Object.assign(target, source, ...)
 var getKeys = require('./_object-keys');
-var toIObject = require('./_to-iobject');
-var isEnum = require('./_object-pie').f;
-module.exports = function (isEntries) {
-  return function (it) {
-    var O = toIObject(it);
-    var keys = getKeys(O);
+var gOPS = require('./_object-gops');
+var pIE = require('./_object-pie');
+var toObject = require('./_to-object');
+var IObject = require('./_iobject');
+var $assign = Object.assign;
+
+// should work with symbols and should have deterministic property order (V8 bug)
+module.exports = !$assign || require('./_fails')(function () {
+  var A = {};
+  var B = {};
+  // eslint-disable-next-line no-undef
+  var S = Symbol();
+  var K = 'abcdefghijklmnopqrst';
+  A[S] = 7;
+  K.split('').forEach(function (k) { B[k] = k; });
+  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
+}) ? function assign(target, source) { // eslint-disable-line no-unused-vars
+  var T = toObject(target);
+  var aLen = arguments.length;
+  var index = 1;
+  var getSymbols = gOPS.f;
+  var isEnum = pIE.f;
+  while (aLen > index) {
+    var S = IObject(arguments[index++]);
+    var keys = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S);
     var length = keys.length;
-    var i = 0;
-    var result = [];
+    var j = 0;
     var key;
-    while (length > i) if (isEnum.call(O, key = keys[i++])) {
-      result.push(isEntries ? [key, O[key]] : O[key]);
-    } return result;
-  };
-};
+    while (length > j) if (isEnum.call(S, key = keys[j++])) T[key] = S[key];
+  } return T;
+} : $assign;
 
 });
 ___scope___.file("library/modules/_object-keys.js", function(exports, require, module, __filename, __dirname){
@@ -4277,44 +4034,6 @@ module.exports = function (object, names) {
     ~arrayIndexOf(result, key) || result.push(key);
   }
   return result;
-};
-
-});
-___scope___.file("library/modules/_to-iobject.js", function(exports, require, module, __filename, __dirname){
-
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = require('./_iobject');
-var defined = require('./_defined');
-module.exports = function (it) {
-  return IObject(defined(it));
-};
-
-});
-___scope___.file("library/modules/_iobject.js", function(exports, require, module, __filename, __dirname){
-
-// fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = require('./_cof');
-// eslint-disable-next-line no-prototype-builtins
-module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
-  return cof(it) == 'String' ? it.split('') : Object(it);
-};
-
-});
-___scope___.file("library/modules/_cof.js", function(exports, require, module, __filename, __dirname){
-
-var toString = {}.toString;
-
-module.exports = function (it) {
-  return toString.call(it).slice(8, -1);
-};
-
-});
-___scope___.file("library/modules/_defined.js", function(exports, require, module, __filename, __dirname){
-
-// 7.2.1 RequireObjectCoercible(argument)
-module.exports = function (it) {
-  if (it == undefined) throw TypeError("Can't call method on  " + it);
-  return it;
 };
 
 });
@@ -4421,135 +4140,6 @@ ___scope___.file("library/modules/_enum-bug-keys.js", function(exports, require,
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
-
-});
-___scope___.file("library/modules/_object-pie.js", function(exports, require, module, __filename, __dirname){
-
-exports.f = {}.propertyIsEnumerable;
-
-});
-___scope___.file("library/fn/object/get-own-property-descriptor.js", function(exports, require, module, __filename, __dirname){
-
-require('../../modules/es6.object.get-own-property-descriptor');
-var $Object = require('../../modules/_core').Object;
-module.exports = function getOwnPropertyDescriptor(it, key) {
-  return $Object.getOwnPropertyDescriptor(it, key);
-};
-
-});
-___scope___.file("library/modules/es6.object.get-own-property-descriptor.js", function(exports, require, module, __filename, __dirname){
-
-// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
-var toIObject = require('./_to-iobject');
-var $getOwnPropertyDescriptor = require('./_object-gopd').f;
-
-require('./_object-sap')('getOwnPropertyDescriptor', function () {
-  return function getOwnPropertyDescriptor(it, key) {
-    return $getOwnPropertyDescriptor(toIObject(it), key);
-  };
-});
-
-});
-___scope___.file("library/modules/_object-gopd.js", function(exports, require, module, __filename, __dirname){
-
-var pIE = require('./_object-pie');
-var createDesc = require('./_property-desc');
-var toIObject = require('./_to-iobject');
-var toPrimitive = require('./_to-primitive');
-var has = require('./_has');
-var IE8_DOM_DEFINE = require('./_ie8-dom-define');
-var gOPD = Object.getOwnPropertyDescriptor;
-
-exports.f = require('./_descriptors') ? gOPD : function getOwnPropertyDescriptor(O, P) {
-  O = toIObject(O);
-  P = toPrimitive(P, true);
-  if (IE8_DOM_DEFINE) try {
-    return gOPD(O, P);
-  } catch (e) { /* empty */ }
-  if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
-};
-
-});
-___scope___.file("library/modules/_object-sap.js", function(exports, require, module, __filename, __dirname){
-
-// most Object methods by ES6 should accept primitives
-var $export = require('./_export');
-var core = require('./_core');
-var fails = require('./_fails');
-module.exports = function (KEY, exec) {
-  var fn = (core.Object || {})[KEY] || Object[KEY];
-  var exp = {};
-  exp[KEY] = exec(fn);
-  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
-};
-
-});
-___scope___.file("library/fn/object/define-property.js", function(exports, require, module, __filename, __dirname){
-
-require('../../modules/es6.object.define-property');
-var $Object = require('../../modules/_core').Object;
-module.exports = function defineProperty(it, key, desc) {
-  return $Object.defineProperty(it, key, desc);
-};
-
-});
-___scope___.file("library/modules/es6.object.define-property.js", function(exports, require, module, __filename, __dirname){
-
-var $export = require('./_export');
-// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !require('./_descriptors'), 'Object', { defineProperty: require('./_object-dp').f });
-
-});
-___scope___.file("library/fn/object/assign.js", function(exports, require, module, __filename, __dirname){
-
-require('../../modules/es6.object.assign');
-module.exports = require('../../modules/_core').Object.assign;
-
-});
-___scope___.file("library/modules/es6.object.assign.js", function(exports, require, module, __filename, __dirname){
-
-// 19.1.3.1 Object.assign(target, source)
-var $export = require('./_export');
-
-$export($export.S + $export.F, 'Object', { assign: require('./_object-assign') });
-
-});
-___scope___.file("library/modules/_object-assign.js", function(exports, require, module, __filename, __dirname){
-
-'use strict';
-// 19.1.2.1 Object.assign(target, source, ...)
-var getKeys = require('./_object-keys');
-var gOPS = require('./_object-gops');
-var pIE = require('./_object-pie');
-var toObject = require('./_to-object');
-var IObject = require('./_iobject');
-var $assign = Object.assign;
-
-// should work with symbols and should have deterministic property order (V8 bug)
-module.exports = !$assign || require('./_fails')(function () {
-  var A = {};
-  var B = {};
-  // eslint-disable-next-line no-undef
-  var S = Symbol();
-  var K = 'abcdefghijklmnopqrst';
-  A[S] = 7;
-  K.split('').forEach(function (k) { B[k] = k; });
-  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
-}) ? function assign(target, source) { // eslint-disable-line no-unused-vars
-  var T = toObject(target);
-  var aLen = arguments.length;
-  var index = 1;
-  var getSymbols = gOPS.f;
-  var isEnum = pIE.f;
-  while (aLen > index) {
-    var S = IObject(arguments[index++]);
-    var keys = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S);
-    var length = keys.length;
-    var j = 0;
-    var key;
-    while (length > j) if (isEnum.call(S, key = keys[j++])) T[key] = S[key];
-  } return T;
-} : $assign;
 
 });
 ___scope___.file("library/modules/_object-gops.js", function(exports, require, module, __filename, __dirname){
@@ -5620,6 +5210,45 @@ function get(target, propertyKey /* , receiver */) {
 }
 
 $export($export.S, 'Reflect', { get: get });
+
+});
+___scope___.file("library/fn/object/entries.js", function(exports, require, module, __filename, __dirname){
+
+require('../../modules/es7.object.entries');
+module.exports = require('../../modules/_core').Object.entries;
+
+});
+___scope___.file("library/modules/es7.object.entries.js", function(exports, require, module, __filename, __dirname){
+
+// https://github.com/tc39/proposal-object-values-entries
+var $export = require('./_export');
+var $entries = require('./_object-to-array')(true);
+
+$export($export.S, 'Object', {
+  entries: function entries(it) {
+    return $entries(it);
+  }
+});
+
+});
+___scope___.file("library/modules/_object-to-array.js", function(exports, require, module, __filename, __dirname){
+
+var getKeys = require('./_object-keys');
+var toIObject = require('./_to-iobject');
+var isEnum = require('./_object-pie').f;
+module.exports = function (isEntries) {
+  return function (it) {
+    var O = toIObject(it);
+    var keys = getKeys(O);
+    var length = keys.length;
+    var i = 0;
+    var result = [];
+    var key;
+    while (length > i) if (isEnum.call(O, key = keys[i++])) {
+      result.push(isEntries ? [key, O[key]] : O[key]);
+    } return result;
+  };
+};
 
 });
 return ___scope___.entry = "index.js";

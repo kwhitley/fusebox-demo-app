@@ -11,14 +11,15 @@ import { HashRouter } from 'react-router-dom'
 import createSagaMiddleware from 'redux-saga'
 import createHistory from 'history/createBrowserHistory'
 
-import mergedReducers from './state'
+import { merge } from 'redux-automap'
 import App from './components/App'
 import api from './state/api'
+import list from './state/list'
 import route from './state/route'
-import dashboards from './state/dashboards'
 import './styles/base.scss'
 import './styles/base.less'
 
+const mergedReducers = merge([ api, list, route ])
 const history = createHistory()
 const sagaMiddleware = createSagaMiddleware()
 const rootReducer = combineReducers(mergedReducers)
@@ -35,9 +36,6 @@ history.listen((location) => {
   let path = `${location.pathname}${location.search}${location.hash}`
   store.dispatch(route.actions.change(path))
 })
-
-store.dispatch(dashboards.addGroup('Newish Group', 1))
-store.dispatch(dashboards.addTagToGroup(6, 2))
 
 let path = `${location.pathname}${location.search}${location.hash}`
 store.dispatch(route.actions.change(path))
