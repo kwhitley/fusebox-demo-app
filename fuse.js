@@ -1,7 +1,6 @@
 const { src, task, exec, context } = require('fuse-box/sparky')
 const {
   FuseBox,
-  BabelPlugin,
   JSONPlugin,
   CSSPlugin,
   CSSResourcePlugin,
@@ -14,24 +13,14 @@ const {
 const clientConfig = isProduction => ({
   homeDir: 'src',
   output: 'dist/client/$name.js',
+  useTypescriptCompiler: true,
+  experimentalFeatures: true,
+  allowSyntheticDefaultImports: true,
   hash: isProduction,
   debug: !isProduction,
   cache: !isProduction,
   sourceMaps: true,
-  useJsNext : ["antd"],
   plugins: [
-    BabelPlugin({
-      config: {
-        sourceMaps: !isProduction,
-        presets: [ 'env', 'react' ],
-        plugins: [
-          'transform-class-properties',
-          'transform-object-rest-spread',
-          'transform-function-bind',
-          'transform-runtime'
-        ],
-      },
-    }),
     [
       SassPlugin(),
       CSSPlugin()
@@ -70,21 +59,12 @@ const clientConfig = isProduction => ({
 const serverConfig = isProduction => ({
   homeDir: 'src',
   output: 'dist/$name.js',
+  useTypescriptCompiler: true,
+  experimentalFeatures: true,
+  allowSyntheticDefaultImports: true,
   debug: true,
   sourceMaps: true,
   plugins: [
-    BabelPlugin({
-      config: {
-        sourceMaps: true,
-        presets: [ 'env', 'react' ],
-        plugins: [
-          'transform-class-properties',
-          'transform-object-rest-spread',
-          'transform-function-bind',
-          'transform-runtime'
-        ],
-      },
-    }),
     JSONPlugin(),
   ]
 })

@@ -1,56 +1,112 @@
 (function(FuseBox){FuseBox.$fuse$=FuseBox;
-FuseBox.target = "browser";
-// allowSyntheticDefaultImports
-FuseBox.sdep = true;
+FuseBox.target = "server";
+Object.assign(process.env, {"BUILD_MODE":"dev"})
 FuseBox.pkg("default", {}, function(___scope___){
 ___scope___.file("server/index.js", function(exports, require, module, __filename, __dirname){
-/* fuse:injection: */ var process = require("process");
-"use strict";
-exports.__esModule = true;
-// include other main deps
-var express_1 = require("express");
-var body_parser_1 = require("body-parser");
-var compression_1 = require("compression");
-var path_1 = require("path");
-var fs_1 = require("fs");
-// const pkg = require('../package.json')
+
+'use strict';
+
+var _express = require('express');
+
+var _express2 = _interopRequireDefault(_express);
+
+var _bodyParser = require('body-parser');
+
+var _bodyParser2 = _interopRequireDefault(_bodyParser);
+
+var _compression = require('compression');
+
+var _compression2 = _interopRequireDefault(_compression);
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var _envAutoload = require('env-autoload');
+
+var _envAutoload2 = _interopRequireDefault(_envAutoload);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(function () {
+  var enterModule = require('react-hot-loader').enterModule;
+
+  enterModule && enterModule(module);
+})(); // include other main deps
+
+
 // load .env using dotenv first
-require('env-autoload');
+
+
 // instantiate express
-var app = express_1["default"]();
+var app = (0, _express2.default)();
 var PRODUCTION = process.env.NODE_ENV === 'production';
-app.use(body_parser_1["default"].json());
-app.use(body_parser_1["default"].urlencoded({ extended: false }));
-app.use(compression_1["default"]());
+var PORT = process.env.PORT || 3000;
+var server = require('http').createServer(app);
+
+app.use(_bodyParser2.default.json());
+app.use(_bodyParser2.default.urlencoded({ extended: false }));
+app.use((0, _compression2.default)());
+
 // static serving from /dist/client
-var staticPath = path_1["default"].join(__dirname, '../dist/client');
-console.log("serving static content from " + staticPath);
-app.use(express_1["default"].static(staticPath));
+var isDevBuildMode = process.env.BUILD_MODE === 'dev';
+var staticPath = _path2.default.join(__dirname, '../' + (isDevBuildMode ? '.build' : 'dist') + '/client');
+console.log('serving static content from ' + staticPath);
+app.use(_express2.default.static(staticPath));
 // app.use('/client', express.static(staticPath))
+
 // example API entry
 app.get('/test', function (req, res) {
-    return res.json({
-        foo: 'bar',
-        mode: process.env.NODE_ENV,
-        port: process.env.PORT,
-        test: process.env.TEST,
-        production: PRODUCTION
-    });
+  return res.json({
+    foo: 'BAZ',
+    mode: process.env.NODE_ENV,
+    port: process.env.PORT,
+    test: process.env.TEST,
+    production: PRODUCTION
+  });
 });
+
 // json import support
-app.get('/package.json', function (req, res) { return setTimeout(function () {
-    fs_1["default"].readFile(path_1["default"].join(__dirname, '../package.json'), 'utf8', function (err, data) {
-        if (err)
-            throw err;
-        var pkg = JSON.parse(data);
-        var chance = Math.random() > 0.4;
-        return (chance && res.json(pkg)) || res.status(403).send();
+app.get('/package.json', function (req, res) {
+  return setTimeout(function () {
+    _fs2.default.readFile(_path2.default.join(__dirname, '../package.json'), 'utf8', function (err, data) {
+      if (err) throw err;
+
+      var pkg = JSON.parse(data);
+      var chance = Math.random() > 0.4;
+
+      return chance && res.json(pkg) || res.status(403).send();
     });
-}, 1000); });
-var serverPort = process.env.PORT || 3000;
-app.listen(serverPort);
-console.log("Express server @ http://localhost:" + serverPort + " (" + (PRODUCTION ? 'production' : 'development') + ")\n");
-//# sourceMappingURL=index.js.map
+  }, 1000);
+});
+
+server.listen(PORT);
+console.log('Express server @ http://localhost:' + PORT + ' (' + (PRODUCTION ? 'production' : 'development') + ')\n');
+;
+
+(function () {
+  var reactHotLoader = require('react-hot-loader').default;
+
+  var leaveModule = require('react-hot-loader').leaveModule;
+
+  if (!reactHotLoader) {
+    return;
+  }
+
+  reactHotLoader.register(app, 'app', 'unknown');
+  reactHotLoader.register(PRODUCTION, 'PRODUCTION', 'unknown');
+  reactHotLoader.register(PORT, 'PORT', 'unknown');
+  reactHotLoader.register(server, 'server', 'unknown');
+  reactHotLoader.register(isDevBuildMode, 'isDevBuildMode', 'unknown');
+  reactHotLoader.register(staticPath, 'staticPath', 'unknown');
+  leaveModule(module);
+})();
+
+;
 });
 return ___scope___.entry = "server/index.js";
 });
