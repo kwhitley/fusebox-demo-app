@@ -38,8 +38,6 @@ const clientConfig = isProduction => ({
     ],
     CSSPlugin(),
     WebIndexPlugin({
-      title: 'Fuse Box Demo',
-      target: 'index.html',
       template: 'src/client/index.html',
       bundles: ['app', 'vendor']
     }),
