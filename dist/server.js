@@ -1,55 +1,54 @@
 (function(FuseBox){FuseBox.$fuse$=FuseBox;
-FuseBox.target = "browser";
+FuseBox.target = "server";
 // allowSyntheticDefaultImports
 FuseBox.sdep = true;
+Object.assign(process.env, {"NODE_ENV":"production","foo":"bar"})
 FuseBox.pkg("default", {}, function(___scope___){
 ___scope___.file("server/index.js", function(exports, require, module, __filename, __dirname){
-/* fuse:injection: */ var process = require("process");
+
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 // include other main deps
-var express_1 = require("express");
-var body_parser_1 = require("body-parser");
-var compression_1 = require("compression");
-var path_1 = require("path");
-var fs_1 = require("fs");
+const express_1 = require("express");
+const body_parser_1 = require("body-parser");
+const compression_1 = require("compression");
+const path_1 = require("path");
+const fs_1 = require("fs");
 // const pkg = require('../package.json')
 // load .env using dotenv first
-require('env-autoload');
+require("env-autoload");
 // instantiate express
-var app = express_1["default"]();
-var PRODUCTION = process.env.NODE_ENV === 'production';
-app.use(body_parser_1["default"].json());
-app.use(body_parser_1["default"].urlencoded({ extended: false }));
-app.use(compression_1["default"]());
+const app = express_1.default();
+const isProduction = process.env.NODE_ENV === 'production';
+app.use(body_parser_1.default.json());
+app.use(body_parser_1.default.urlencoded({ extended: false }));
+app.use(compression_1.default());
 // static serving from /dist/client
-var staticPath = path_1["default"].join(__dirname, '../dist/client');
-console.log("serving static content from " + staticPath);
-app.use(express_1["default"].static(staticPath));
+const staticPath = path_1.default.join(__dirname, `../${isProduction ? 'dist' : '.dist-dev'}/client`);
+console.log(`serving static content from ${staticPath}`);
+app.use(express_1.default.static(staticPath));
 // app.use('/client', express.static(staticPath))
 // example API entry
-app.get('/test', function (req, res) {
-    return res.json({
-        foo: 'bar',
-        mode: process.env.NODE_ENV,
-        port: process.env.PORT,
-        test: process.env.TEST,
-        production: PRODUCTION
-    });
-});
+app.get('/test', (req, res) => res.json({
+    foo: 'bar',
+    mode: process.env.NODE_ENV,
+    port: process.env.PORT,
+    test: process.env.TEST,
+    production: isProduction,
+}));
 // json import support
-app.get('/package.json', function (req, res) { return setTimeout(function () {
-    fs_1["default"].readFile(path_1["default"].join(__dirname, '../package.json'), 'utf8', function (err, data) {
+app.get('/package.json', (req, res) => setTimeout(() => {
+    fs_1.default.readFile(path_1.default.join(__dirname, '../package.json'), 'utf8', (err, data) => {
         if (err)
             throw err;
-        var pkg = JSON.parse(data);
-        var chance = Math.random() > 0.4;
+        const pkg = JSON.parse(data);
+        const chance = Math.random() > 0.4;
         return (chance && res.json(pkg)) || res.status(403).send();
     });
-}, 1000); });
-var serverPort = process.env.PORT || 3000;
+}, 1000));
+const serverPort = process.env.PORT || 3000;
 app.listen(serverPort);
-console.log("Express server @ http://localhost:" + serverPort + " (" + (PRODUCTION ? 'production' : 'development') + ")\n");
+console.log(`Express server @ http://localhost:${serverPort} (${isProduction ? 'production' : 'development'})\n`);
 //# sourceMappingURL=index.js.map
 });
 return ___scope___.entry = "server/index.js";

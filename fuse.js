@@ -1,6 +1,7 @@
 const { src, task, exec, context } = require('fuse-box/sparky')
 const {
   FuseBox,
+  EnvPlugin,
   JSONPlugin,
   CSSPlugin,
   CSSResourcePlugin,
@@ -10,9 +11,12 @@ const {
   QuantumPlugin
 } = require('fuse-box')
 
-const clientConfig = isProduction => ({
+const DEV_BUILD_PATH = '.dist-dev'
+const PROD_BUILD_PATH = 'dist'
+
+const clientConfig = (isProduction, basePath = DEV_BUILD_PATH) => ({
   homeDir: 'src',
-  output: 'dist/client/$name.js',
+  output: `${basePath}/client/$name.js`,
   useTypescriptCompiler: true,
   experimentalFeatures: true,
   allowSyntheticDefaultImports: true,
@@ -31,7 +35,7 @@ const clientConfig = isProduction => ({
     ],
     [
       CSSResourcePlugin({
-        dist: 'dist/client/assets/',
+        dist: `${basePath}/client/assets/`,
         resolve: f => `/assets/${f}`
       }),
       CSSPlugin()
@@ -54,22 +58,27 @@ const clientConfig = isProduction => ({
   ]
 })
 
-const serverConfig = isProduction => ({
+const serverConfig = (isProduction, basePath = DEV_BUILD_PATH) => ({
   homeDir: 'src',
-  output: 'dist/$name.js',
+  output: `${basePath}/$name.js`,
   useTypescriptCompiler: true,
   experimentalFeatures: true,
   allowSyntheticDefaultImports: true,
+  target : 'server@esnext',
   debug: true,
   sourceMaps: true,
   plugins: [
+    isProduction && EnvPlugin({
+      NODE_ENV: 'production',
+      foo: 'bar'
+    }),
     JSONPlugin(),
   ]
 })
 
 task('default', async context => {
-  await src('./dist')
-      .clean('dist/')
+  await src(`./${DEV_BUILD_PATH}`)
+      .clean(`${DEV_BUILD_PATH}/`)
       .exec()
 
   const client = FuseBox.init(clientConfig(false))
@@ -93,12 +102,12 @@ task('default', async context => {
 })
 
 task('build', async context => {
-  await src('./dist')
-      .clean('dist/')
+  await src(`./${PROD_BUILD_PATH}`)
+      .clean(`${PROD_BUILD_PATH}/`)
       .exec()
 
-  const client = FuseBox.init(clientConfig(true))
-  const server = FuseBox.init(serverConfig(true))
+  const client = FuseBox.init(clientConfig(true, PROD_BUILD_PATH))
+  const server = FuseBox.init(serverConfig(true, PROD_BUILD_PATH))
 
   client
     .bundle('vendor')
