@@ -6,12 +6,11 @@ import { HashRouter } from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css'       // load base styles
 
 // local imports
-import App from './components/App'
-import store from './store'
+import App from './components/App'              // root React component
+import store from './store'                     // Redux store
 
 // local styles
-import './styles/base.scss'                     // example SASS parsing
-import './styles/base.less'                     // example LESS parsing
+import './styles/base.scss'                     // example local SASS/LESS
 
 ReactDom.render(                                // bootstrap the app
   <Provider store={store}>

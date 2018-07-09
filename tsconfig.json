@@ -5,6 +5,7 @@
     "jsx": "react",
     "importHelpers": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "experimentalFeatures": true
   }
 }

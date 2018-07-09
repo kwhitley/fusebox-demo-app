@@ -46,11 +46,10 @@ yarn lint        # lints the project
 ```
 
 ### Structure
-- `/src/client` - throw your entire untranspiled client code+assets in here (entry point is index.html)
+- `/src/client` - throw your entire untranspiled client code+assets in here (entry point is index.jsx)
 - `/src/server` - throw your entire untranspiled server code here (entry point is index.js)
-- `/dist` - generated output using the `yarn dev` or `yarn build` commands
+- `/dist` - generated distributable output from the `yarn build` command
 - `.env` (root) - local environment variables will be automatically loaded
 - `fuse.js` - build config
 - `.eslint.json` - linting config
-- `.babelrc` - babel transpile options
 
