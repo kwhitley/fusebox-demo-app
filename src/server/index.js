@@ -21,7 +21,6 @@ app.use(compression())
 const staticPath = path.join(__dirname, `../${isProduction ? 'dist' : '.dist-dev'}/client`)
 console.log(`serving static content from ${staticPath}`)
 app.use(express.static(staticPath))
-// app.use('/client', express.static(staticPath))
 
 // example API entry
 app.get('/test', (req, res) =>
