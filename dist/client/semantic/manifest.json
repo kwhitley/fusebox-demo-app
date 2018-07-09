@@ -1,0 +1,22 @@
+{
+  "css": {
+    "filename": "styles.css",
+    "type": "css",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/semantic/styles.css",
+    "webIndexed": true
+  },
+  "vendor": {
+    "fileName": "vendor.js",
+    "type": "js",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/semantic/vendor.js",
+    "webIndexed": true,
+    "relativePath": "vendor.js"
+  },
+  "app": {
+    "fileName": "app.js",
+    "type": "js",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/semantic/app.js",
+    "webIndexed": true,
+    "relativePath": "app.js"
+  }
+}

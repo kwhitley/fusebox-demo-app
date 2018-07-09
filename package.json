@@ -14,6 +14,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@blueprintjs/core": "^2.3.1",
+    "antd": "^3.6.5",
     "body-parser": "^1.18.3",
     "compression": "^1.7.2",
     "env-autoload": "^1.1.0",
@@ -42,6 +44,8 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
     "react-router-transition": "^1.2.1",
+    "react-toolbox": "^2.0.0-beta.13",
+    "react-transition-group": "^2.4.0",
     "react-wrappers": "^1.0.0",
     "redux": "^4.0.0",
     "redux-automap": "^1.3.1",

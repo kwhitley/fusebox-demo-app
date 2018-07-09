@@ -13,13 +13,13 @@ const {
 
 const DEV_BUILD_PATH = '.dist-dev'
 const PROD_BUILD_PATH = 'dist'
+const variants = ['semantic' , 'blueprint', 'material', 'antd']
 
-const clientConfig = (isProduction, basePath = DEV_BUILD_PATH) => ({
+const clientConfig = (isProduction, variant, basePath = DEV_BUILD_PATH) => ({
   homeDir: 'src',
-  output: `${basePath}/client/$name.js`,
+  output: `${basePath}/client/${variant}/$name.js`,
   useTypescriptCompiler: true,
   allowSyntheticDefaultImports: true,
-  hash: isProduction,
   debug: !isProduction,
   cache: !isProduction,
   sourceMaps: true,
@@ -34,14 +34,14 @@ const clientConfig = (isProduction, basePath = DEV_BUILD_PATH) => ({
     ],
     [
       CSSResourcePlugin({
-        dist: `${basePath}/client/assets/`,
-        resolve: f => `/assets/${f}`
+        dist: `${basePath}/client/${variant}/assets/`,
+        resolve: f => `/${variant}/assets/${f}`
       }),
       CSSPlugin()
     ],
     CSSPlugin(),
     WebIndexPlugin({
-      template: 'src/client/index.html',
+      template: `src/client/${variant}/index.html`,
       bundles: ['app', 'vendor']
     }),
     isProduction && QuantumPlugin({
@@ -79,23 +79,27 @@ task('default', async context => {
       .clean(`${DEV_BUILD_PATH}/`)
       .exec()
 
-  const client = FuseBox.init(clientConfig(false))
+  for (var variant of variants) {
+    let client = FuseBox.init(clientConfig(false, variant))
+
+    client.dev({ port: 4445 + variants.indexOf(variant), httpServer: false })
+
+    client
+      .bundle('app')
+      .instructions(` > client/${variant}/index.jsx`)
+      .watch(`src/client/${variant}/**`)
+      .hmr()
+
+    await client.run()
+  }
+
   const server = FuseBox.init(serverConfig(false))
-  client.dev({ port: 4445, httpServer: false })
-
-  client
-    .bundle('app')
-    .instructions(' > client/index.jsx')
-    .watch('src/client/**')
-    .hmr()
-
   server
     .bundle('server')
     .instructions(' > [server/index.js]')
     .watch('src/server/**')
     .completed(proc => proc.start())
 
-  await client.run()
   await server.run()
 })
 
@@ -104,22 +108,26 @@ task('build', async context => {
       .clean(`${PROD_BUILD_PATH}/`)
       .exec()
 
-  const client = FuseBox.init(clientConfig(true, PROD_BUILD_PATH))
+  for (var variant of variants) {
+    let client = FuseBox.init(clientConfig(true, variant, PROD_BUILD_PATH))
+
+    client
+      .bundle('vendor')
+      .instructions(`~ client/${variant}/index.jsx`)
+
+    client
+      .bundle('app')
+      .instructions(`!> [client/${variant}/index.jsx]`)
+
+    await client.run()
+  }
+
   const server = FuseBox.init(serverConfig(true, PROD_BUILD_PATH))
-
-  client
-    .bundle('vendor')
-    .instructions('~ client/index.jsx')
-
-  client
-    .bundle('app')
-    .instructions('!> [client/index.jsx]')
-
   server
     .bundle('server')
     .instructions(' > [server/index.js]')
     .completed(proc => proc.exec())
 
-  await client.run()
+
   await server.run()
 })

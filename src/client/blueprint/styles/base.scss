@@ -1,0 +1,39 @@
+body {
+//   color: #222;
+//   font-family: sans-serif;
+//   font-weight: lighter;
+//   height: 100%;
+//   width: 100%;
+//   position: relative;
+
+//   &:before {
+//     content: '';
+//     z-index: -1;
+//     position: absolute;
+//     height: 100%;
+//     width: 100%;
+//     opacity: 0.2;
+//     // background-image: url('../images/enlist.jpg');
+//   }
+
+  #app {
+    padding: 1em 2em;
+  }
+}
+
+.pt-button:not([class*="pt-intent-"]) {
+  box-shadow: none;
+  background-image: none;
+  border: none;
+  background-color: #ccc;
+
+  &:hover {
+    background-image: none;
+    background-color: #ddd;
+    border: none;
+  }
+}
+
+.deps-loader {
+  margin-bottom: 1.5em;
+}
