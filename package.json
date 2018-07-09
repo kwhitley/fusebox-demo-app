@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "axios": "^0.18.0",
-    "eslint": "^5.0.1",
+    "eslint": "^5.1.0",
     "eslint-config-airbnb": "17.0.0",
     "eslint-plugin-babel": "^5.1.0",
     "eslint-plugin-class-property": "^1.1.0",
@@ -48,7 +48,7 @@
     "redux-immutable": "^4.0.0",
     "redux-saga": "^0.16.0",
     "reselect": "^3.0.1",
-    "semantic-ui-css": "^2.3.2",
+    "semantic-ui-css": "^2.3.3",
     "semantic-ui-react": "^0.82.0",
     "typescript": "^2.9.2",
     "uglify-es": "^3.3.9",
