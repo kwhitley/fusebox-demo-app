@@ -16,7 +16,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "compression": "^1.7.2",
-    "env-autoload": "^1.1.0",
+    "dotenv": "^6.0.0",
     "express": "^4.16.3"
   },
   "devDependencies": {

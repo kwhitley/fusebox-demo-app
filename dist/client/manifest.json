@@ -1,9 +1,9 @@
 {
   "css": {
-    "filename": "88883fea-styles.css",
+    "filename": "c24085d5-styles.css",
     "type": "css",
-    "hash": "88883fea",
-    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/88883fea-styles.css",
+    "hash": "c24085d5",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/c24085d5-styles.css",
     "webIndexed": true
   },
   "vendor": {
@@ -15,11 +15,11 @@
     "relativePath": "8163a386-vendor.js"
   },
   "app": {
-    "fileName": "b89a005b-app.js",
-    "hash": "b89a005b",
+    "fileName": "91c9fb35-app.js",
+    "hash": "91c9fb35",
     "type": "js",
-    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/b89a005b-app.js",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/91c9fb35-app.js",
     "webIndexed": true,
-    "relativePath": "b89a005b-app.js"
+    "relativePath": "91c9fb35-app.js"
   }
 }

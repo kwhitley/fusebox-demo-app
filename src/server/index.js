@@ -7,7 +7,7 @@ import fs from 'fs'
 // const pkg = require('../package.json')
 
 // load .env using dotenv first
-import 'env-autoload'
+require('dotenv').config()
 
 // instantiate express
 const app = express()
