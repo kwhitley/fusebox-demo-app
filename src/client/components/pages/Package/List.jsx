@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { List, Statistic } from 'semantic-ui-react'
+import { List, Statistic } from '@arundo/ads-react'
 
 const PackageList =({ name, libs = [] }) =>
   <div>

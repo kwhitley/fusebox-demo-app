@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, Table, Checkbox } from 'semantic-ui-react'
+import { Button, Table, Checkbox } from '@arundo/ads-react'
 import humanize from 'humanize-duration'
 
 const ListItem = ({ item, removeItem, toggleIsActive }) =>
