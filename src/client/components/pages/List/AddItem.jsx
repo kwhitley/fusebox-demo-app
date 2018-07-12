@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Input, Form } from '@arundo/ads-react'
+import Input from '@arundo/ads-react/Input'
+import Form from '@arundo/ads-react/Form'
 
 class AddItem extends React.Component {
   constructor(props) {

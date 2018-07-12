@@ -1,5 +1,8 @@
 import React from 'react'
-import { Menu } from '@arundo/ads-react'
+import Menu from '@arundo/ads-react/Menu'
+import Segment from '@arundo/ads-react/Segment'
+import Grid from '@arundo/ads-react/Grid'
+import Header from '@arundo/ads-react/Header'
 import { NavLink } from 'react-router-dom'
 
 // pages
@@ -12,15 +15,18 @@ export const routes = [
 ]
 
 export const Nav = () =>
-  <Menu pointing secondary className="navigation">
-    {
-      routes.map(route => <Menu.Item
-                            key={route.path}
-                            to={route.path}
-                            name={route.name}
-                            as={NavLink}
-                          />)
-    }
-  </Menu>
+  <div className="navbar">
+    <Header inverted size='huge'>ARUNDO</Header>
+    <Menu inverted pointing secondary className="navigation">
+      {
+        routes.map(route => <Menu.Item
+                              key={route.path}
+                              to={route.path}
+                              name={route.name}
+                              as={NavLink}
+                            />)
+      }
+    </Menu>
+  </div>
 
 export default Nav

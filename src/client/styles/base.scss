@@ -6,61 +6,48 @@ body {
   width: 100%;
   position: relative;
 
-  &:before {
-    content: '';
-    z-index: -1;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    opacity: 0.2;
-    // background-image: url('../images/enlist.jpg');
-  }
+  // &:before {
+  //   content: '';
+  //   z-index: -1;
+  //   position: absolute;
+  //   height: 100%;
+  //   width: 100%;
+  //   opacity: 0.2;
+  //   background-image: url('./client/images/enlist.jpg');
+  // }
 
-  #app {
-    padding: 1em 2em;
-  }
-}
-
-.navigation {
-  &:hover .item {
-    border-bottom-color: transparent !important;
-  }
-
-  .item {
-    transition: all 0.3s ease !important;
-
-    &:hover {
-      border-color: #1b1c1d !important;
-    }
+  .page-content {
+    clear: both;
+    padding-top: 1em;
   }
 }
 
-.cards > .card {
-  box-shadow: none !important;
-}
+.navbar {
+  background-color: #222;
+  padding: 1em 1.2em;
+  float: left;
+  width: 100%;
 
-.page-content {
-  padding-top: 1em;
-}
+  .header, > .menu {
+    float: left;
+    margin: 0;
+  }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  margin-bottom: 0.5em;
-}
-
-.pages {
-  position: relative;
-
-  > * {
-    position: absolute;
-    width: 100%;
+  .header {
+    margin-top: 0 !important;
   }
 }
 
-.padded {
-  padding: 1em;
+.header.huge {
+  font-weight: lighter;
+}
+
+blockquote {
+  display: block;
+  border-left: 0.3em solid #ddd;
+  font-size: 1.5em;
+  padding: 0 1em 0 1em;
+  margin-bottom: 1em;
+  margin: 0 0 1em 0;
+  line-height: 1.1em;
 }

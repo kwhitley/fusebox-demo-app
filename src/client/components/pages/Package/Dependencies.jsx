@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Grid, Message } from '@arundo/ads-react'
+import Grid from '@arundo/ads-react/Grid'
+import Message from '@arundo/ads-react/Message'
 import List from './List'
 
 const Dependencies = ({ deps, devDeps }) =>

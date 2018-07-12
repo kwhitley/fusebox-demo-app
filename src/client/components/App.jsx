@@ -1,13 +1,14 @@
 import React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { hot } from 'react-hot-loader'
+import Container from '@arundo/ads-react/Container'
+import Segment from '@arundo/ads-react/Segment'
 import Navigation, { routes } from './Nav'
 
 const App = () =>
-  <div>
-    <h1>FuseBox Boilerplate</h1>
+  <Segment basic>
     <Navigation />
-    <div className="page-content">
+    <Segment basic className="page-content">
       <Switch>
         {
           routes.map(route => <Route
@@ -19,7 +20,7 @@ const App = () =>
         }
         <Redirect from="/" exact to={routes.length && routes[0].path} />
       </Switch>
-    </div>
-  </div>
+    </Segment>
+  </Segment>
 
 export default hot(module)(App)

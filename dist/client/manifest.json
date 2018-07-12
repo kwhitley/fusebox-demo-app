@@ -7,19 +7,19 @@
     "webIndexed": true
   },
   "vendor": {
-    "fileName": "dd463e2-vendor.js",
-    "hash": "dd463e2",
+    "fileName": "3a1d77d7-vendor.js",
+    "hash": "3a1d77d7",
     "type": "js",
-    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/dd463e2-vendor.js",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/3a1d77d7-vendor.js",
     "webIndexed": true,
-    "relativePath": "dd463e2-vendor.js"
+    "relativePath": "3a1d77d7-vendor.js"
   },
   "app": {
-    "fileName": "1cb2d773-app.js",
-    "hash": "1cb2d773",
+    "fileName": "9121fee4-app.js",
+    "hash": "9121fee4",
     "type": "js",
-    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/1cb2d773-app.js",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/9121fee4-app.js",
     "webIndexed": true,
-    "relativePath": "1cb2d773-app.js"
+    "relativePath": "9121fee4-app.js"
   }
 }

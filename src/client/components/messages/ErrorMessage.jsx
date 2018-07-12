@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Message } from '@arundo/ads-react'
+import Message from '@arundo/ads-react/Message'
 
 const ErrorMessage = ({ message, children }) =>
   <Message negative>
