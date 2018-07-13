@@ -13,7 +13,7 @@ body {
   //   height: 100%;
   //   width: 100%;
   //   opacity: 0.2;
-  //   background-image: url('./client/images/enlist.jpg');
+  //   background-image: url('../images/enlist.jpg');
   // }
 
   .page-content {
@@ -35,6 +35,11 @@ body {
 
   .header {
     margin-top: 0 !important;
+    margin-right: 1em;
+  }
+
+  .menu {
+    float: right;
   }
 }
 

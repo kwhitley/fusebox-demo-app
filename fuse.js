@@ -7,6 +7,8 @@ const {
   CSSResourcePlugin,
   SassPlugin,
   LESSPlugin,
+  CopyPlugin,
+  ImageBase64Plugin,
   WebIndexPlugin,
   QuantumPlugin
 } = require('fuse-box')
@@ -26,10 +28,18 @@ const clientConfig = (isProduction, basePath = DEV_BUILD_PATH) => ({
   plugins: [
     [
       SassPlugin(),
+      CSSResourcePlugin({
+        dist: `${basePath}/client/assets/`,
+        resolve: f => `/assets/${f}`
+      }),
       CSSPlugin()
     ],
     [
       LESSPlugin(),
+      CSSResourcePlugin({
+        dist: `${basePath}/client/assets/`,
+        resolve: f => `/assets/${f}`
+      }),
       CSSPlugin()
     ],
     [
@@ -40,6 +50,11 @@ const clientConfig = (isProduction, basePath = DEV_BUILD_PATH) => ({
       CSSPlugin()
     ],
     CSSPlugin(),
+    // CopyPlugin({
+    //   files: ['.jpg', '.png'],
+    //   dest: `${basePath}/client/images/`
+    // }),
+    ImageBase64Plugin(),
     WebIndexPlugin({
       template: 'src/client/index.html',
       bundles: ['app', 'vendor']
