@@ -6,7 +6,8 @@ import Header from '@arundo/ads-react/Header'
 import Image from '@arundo/ads-react/Image'
 import { NavLink } from 'react-router-dom'
 
-// import * as logo from '../images/enlist.jpg'
+import * as logo from '../images/enlist.jpg'
+import * as svg from '../images/marker.svg'
 
 // pages
 import { ConnectedList } from './pages/List'
@@ -19,9 +20,11 @@ export const routes = [
 
 export const Nav = () =>
   <div className="navbar">
-    <Header inverted size='huge'>ARUNDO</Header>
-    {/*<Image src={logo} />*/}
-    <Menu inverted pointing secondary className="navigation">
+    <Header size='huge'>
+      <img src={svg} height="20" width="20" />ARUNDO
+    </Header>
+
+    <Menu pointing secondary className="navigation">
       {
         routes.map(route => <Menu.Item
                               key={route.path}

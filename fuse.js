@@ -9,6 +9,7 @@ const {
   LESSPlugin,
   CopyPlugin,
   ImageBase64Plugin,
+  SVGPlugin,
   WebIndexPlugin,
   QuantumPlugin
 } = require('fuse-box')
@@ -50,11 +51,12 @@ const clientConfig = (isProduction, basePath = DEV_BUILD_PATH) => ({
       CSSPlugin()
     ],
     CSSPlugin(),
-    // CopyPlugin({
-    //   files: ['.jpg', '.png'],
-    //   dest: `${basePath}/client/images/`
-    // }),
+    CopyPlugin({
+      files: ['.jpg', '.png'],
+      dest: `${basePath}/client/images/`
+    }),
     ImageBase64Plugin(),
+    SVGPlugin(),
     WebIndexPlugin({
       template: 'src/client/index.html',
       bundles: ['app', 'vendor']

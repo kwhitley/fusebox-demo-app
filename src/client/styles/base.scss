@@ -23,7 +23,7 @@ body {
 }
 
 .navbar {
-  background-color: #222;
+  // background-color: #222;
   padding: 1em 1.2em;
   float: left;
   width: 100%;
@@ -36,6 +36,13 @@ body {
   .header {
     margin-top: 0 !important;
     margin-right: 1em;
+    color: #33aaee;
+
+    img {
+      width: 1em !important;
+      height: 1em !important;
+      margin-top: -0.2em;
+    }
   }
 
   .menu {
