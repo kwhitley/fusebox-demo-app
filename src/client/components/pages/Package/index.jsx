@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Button from '@arundo/ads-react/Button'
 import Grid from '@arundo/ads-react/Grid'
 import Segment from '@arundo/ads-react/Segment'
+import Header from '@arundo/ads-react/Header'
 import { connect } from 'react-redux'
 import { fromImmutable } from 'react-wrappers'
 import Dependencies from './Dependencies'
@@ -19,13 +20,8 @@ const Package = ({ pkg, deps, devDeps, timesLoaded, loadPackageInfo }) =>
     { deps.length > 0 && <Dependencies deps={deps} devDeps={devDeps} /> }
     { pkg.error && <ErrorMessage message={pkg.error} /> }
 
-    <Grid columns='equal' divided inverted stackable>
-      <Grid.Row>
-        <Grid.Column>
-          <h1>Header</h1>
-        </Grid.Column>
-      </Grid.Row>
-
+    <Header size="large">Header</Header>
+    <Grid columns="equal" divided inverted stackable>
       <Grid.Row divided>
         <Grid.Column width={4}>
           <Segment vertical>

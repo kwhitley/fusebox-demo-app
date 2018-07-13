@@ -1,25 +1,25 @@
 {
   "css": {
-    "filename": "c24085d5-styles.css",
+    "filename": "173027bb-styles.css",
     "type": "css",
-    "hash": "c24085d5",
-    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/c24085d5-styles.css",
+    "hash": "173027bb",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/173027bb-styles.css",
     "webIndexed": true
   },
   "vendor": {
-    "fileName": "3a1d77d7-vendor.js",
-    "hash": "3a1d77d7",
+    "fileName": "aaa04fcf-vendor.js",
+    "hash": "aaa04fcf",
     "type": "js",
-    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/3a1d77d7-vendor.js",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/aaa04fcf-vendor.js",
     "webIndexed": true,
-    "relativePath": "3a1d77d7-vendor.js"
+    "relativePath": "aaa04fcf-vendor.js"
   },
   "app": {
-    "fileName": "9121fee4-app.js",
-    "hash": "9121fee4",
+    "fileName": "649b1739-app.js",
+    "hash": "649b1739",
     "type": "js",
-    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/9121fee4-app.js",
+    "absPath": "/Users/kevinwhitley/dev/kwhitley/fusebox-demo-app/dist/client/649b1739-app.js",
     "webIndexed": true,
-    "relativePath": "9121fee4-app.js"
+    "relativePath": "649b1739-app.js"
   }
 }
